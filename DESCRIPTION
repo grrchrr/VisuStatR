@@ -1,0 +1,28 @@
+Package: VisuStatR
+Type: Package
+Title: Visualizing Statistics on Images in R
+Version: 0.1.0
+Author: Christoph Harmel
+Maintainer: Christoph Harmel <harmel@stud.uni-heidelberg.de>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 3.6),
+    tidyverse,
+    grid,
+    gridExtra,
+    rlang,
+    magick,
+    cowplot,
+    parallel,
+    foreach,
+    doSNOW,
+    plotly
+Imports:
+    Rmisc,
+    facetscales,
+    ggecho
+RoxygenNote: 7.1.1
