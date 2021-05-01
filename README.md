@@ -33,7 +33,7 @@ VisuStatR supports .tiff-stacks of 3D image data as input. Since `ggplot2` just 
 ### GUI: Shiny App
 In addition to the functionality as an R-package, VisuStatR can be completely used within a Shiny-app by calling `visustat_shiny()`. The Shiny-app acts as an graphical-user interface and allows to import and prepare tracking and image data as well as process these with all VisuStatR functionalities. In contrast to using VisuStatR in an IDE or terminal, the Shiny-app adds a much more interactive way of data-analysis and allows users that are not proficient with the R language to process their data with VisuStatR.
 
-![Shiny screenshot](images/app_visumot_frame.jpeg)
+![Shiny screenshot](images/app_visustat_frame.png)
 
 ## Install VisuStatR
 ```{r}
