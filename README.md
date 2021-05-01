@@ -8,12 +8,12 @@ Live-cell microscopy has become an essential tool for analyzing dynamic processe
 
 ![Concepts of VisuStatR](images/visumotr_concept.png)
 
-The package acts as a wrapper for annotating provided images with several, modifiable `ggplot2`-layers. With `visustat_frame()`, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. `visustat_summary()` allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with `visustat_all()` which allows to combine mapped frames and summary plots created by `visustat_frame()` and `visustat_summary()`. The ouput of all functions are `ggplot2`-objects which can further be manipulated in a common manner.
+The package acts as a wrapper for annotating provided images with several, modifiable `ggplot2`-layers. With `visustat_frame()`, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. `visustat_summary()` allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with `visustat_all()` which allows to combine mapped frames and summary plots created by `visustat_frame()` and `visustat_summary()`. The output of all functions are `ggplot2`-objects which can further be manipulated in a common manner.
 
 ## Display modes
 
 ### Mapping color and shape
-VisuStatR allows for several display modes. The most common is shown above where the complete image is captured and one continous parameter is mapped on the track color. In addition, it is also possible to map discrete variables on shape and/or color or continous variables on size and/or alpha. In this example, contact-state and infection-status of tracked cells were mapped to color and shape.
+VisuStatR allows for several display modes. The most common is shown above where the complete image is captured and one continuous parameter is mapped on the track color. In addition, it is also possible to map discrete variables on shape and/or color or continuous variables on size and/or alpha. In this example, contact-state and infection-status of tracked cells were mapped to color and shape.
 
 ![Mapping contact state and infection state](images/shape_color.jpg)
 

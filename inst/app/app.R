@@ -5,7 +5,7 @@
 library(shiny)
 library(rlang)
 library(magrittr)
-library(visumotR)
+library(VisuStatR)
 library(DT)
 library(shinythemes)
 library(ggecho)
@@ -89,9 +89,9 @@ read_images  <- tabItem(tabName = 'read_images', fluidRow(
                switchInput(label = 'Normalize',
                            inputId = 'normalize',
                            value = FALSE))
-    ), column(width=9, 
+    ), column(width=9,
               tabBox(width=NULL, height = '100%' ,title='Image Browser',
-                     tabPanel('Import', 
+                     tabPanel('Import',
                               shinyFilesButton('images', 'Browse Images', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
                               hr(),
                               div(verbatimTextOutput('filepaths_img'), style= 'width:100%')),
@@ -142,14 +142,14 @@ visumot_frame_tab <- tabItem(tabName = 'visumot_frame', fluidRow(
                switchInput(label = 'Axis',
                            inputId = 'axis',
                            value = FALSE
-               ), 
+               ),
                switchInput(label = '3D',
                            inputId = 'dims_3d',
                            value = FALSE
                )
-               
+
                )
-    ), column(width=9, 
+    ), column(width=9,
               box(width=NULL, title='Viewer',
                   uiOutput('frame_select'),
                   hr(),
@@ -169,27 +169,27 @@ visumot_frame_tab <- tabItem(tabName = 'visumot_frame', fluidRow(
 
 # 2.1.3.4: Summary ####
 visumot_sum_tab <- tabItem('visumot_summary', fluidRow(
-    column(width = 3, 
-           box(width = NULL, title = 'Options', 
+    column(width = 3,
+           box(width = NULL, title = 'Options',
                uiOutput('summary_ui'))),
-    column(width=9, 
+    column(width=9,
            box(width=NULL, title = 'Summary',
            plotOutput('visumot_summary', height = 800)))
-           
+
     )
 )
 # 2.1.3.5: Animation ####
 visumot_all_tab <- tabItem('visumot_all', fluidRow(
-    column(width = 2, 
-           box(width = NULL, title = 'Options', 
+    column(width = 2,
+           box(width = NULL, title = 'Options',
                selectInput('display', 'Layout', choices = c('Frame','Summary','Both')),
                sliderInput('frame.range','Frame range', min=1, max = 120, value = c(1,120)),
                numericInput('width','Width',min=1, max=NA, value = 2000, step = 1),
                numericInput('height','Height',min=1, max=NA, value = 1200, step = 1),
                numericInput('rel_width', 'Ratio', value = 0.65, step = 0.05, min = 0.05, max = 0.95))),
-    column(width=10, 
+    column(width=10,
            box(width=NULL, title = 'Image Series Viewer',
-               'When clicking Start rendering the image series with the options from the Frame and Summary panels will be rendered. 
+               'When clicking Start rendering the image series with the options from the Frame and Summary panels will be rendered.
                You can preview the output of single frames in order to be sure everything is of your liking.',
                hr(),
                actionButton('preview_frame', 'Update Preview', icon = icon('refresh')),
@@ -202,7 +202,7 @@ visumot_all_tab <- tabItem('visumot_all', fluidRow(
                br(),
                hr(),
                actionButton('run_all','Start rendering', icon = icon('refresh'))))
-    
+
 )
 )
 # 2.1.3.6: How to ####
@@ -224,16 +224,16 @@ ui <- dashboardPage(header, sidebar, body)
 
 # 3: Server ####
 server <- function(input, output, session) {
-    
+
     # 3.1: Read In Data ####
     # 3.1.1: Filesystem Data ####
-    
+
     volumes <- c(Home = fs::path_home(), 'R Installation' = R.home(), getVolumes()())
-    
+
     ## select tracking data
     shinyFileChoose(input, 'file', roots = volumes, session = session)
-    
-    
+
+
     ## show rendered overview over selected files and their paths
     output$filepaths <- renderPrint({
         if (is.integer(input$file)) {
@@ -242,7 +242,7 @@ server <- function(input, output, session) {
             parseFilePaths(volumes, input$file)
         }
     })
-    
+
     ## create select data ui
     output$select_data <- renderUI({
         list(
@@ -252,26 +252,26 @@ server <- function(input, output, session) {
             )
         )}
     )
-    
+
     ## read in dataframe
     df_raw <- eventReactive(input$load_df,{
         read.csv(parseFilePaths(volumes, input$file) %>% filter(name == input$tracking_data) %>% pull(datapath)) %>% as_tibble()
     })
-    
-    ## modify column names 
-    
+
+    ## modify column names
+
     df <- eventReactive(input$update_df,{
         vars <- c(track=input$track, time=input$time, X=input$X, Y=input$Y)
         if (input$dims_df==3) {
             vars <- c(vars,Z=input$Z)
         }
         df_raw() %>% rename(vars)
-    }) 
-    
-    
-    
+    })
+
+
+
     ## UI for selecting X, Y, Z, time, and track columns
-    
+
     output$prepare_df <- renderUI({
         if (input$tracking_data=='') {
             return(list())
@@ -283,17 +283,17 @@ server <- function(input, output, session) {
                 selectInput('X', 'X position', choices = columns, selected = columns[3]),
                 selectInput('Y', 'Y position', choices = columns, selected = columns[4])
             )
-        } 
+        }
         if (input$dims_df==3) {
              column_names <- append(column_names,list(selectInput('Z', 'Z position', choices = columns, selected = columns[5])))
         }
         return(column_names)
     })
-    
-    
+
+
     ## 3.1.1.1: Dataframe Browser ####
     output$df_raw <- renderDataTable({df_raw()}, options = list(scrollX = TRUE))
-    
+
     ## create ui
     observeEvent(input$load_df,{
         output$df_table <- renderUI({
@@ -302,12 +302,12 @@ server <- function(input, output, session) {
             } else {
                 list(dataTableOutput('df_raw'))
             }
-            
+
         })
     })
-    
+
     output$df_tracking <- renderDataTable({df()}, options = list(scrollX = TRUE))
-    
+
     ## create ui
     observeEvent(input$update_df,{
     output$df_table_prepared <- renderUI({
@@ -316,13 +316,13 @@ server <- function(input, output, session) {
         } else {
             list(dataTableOutput('df_tracking'))
         }
-        
+
     })
     })
-    
+
     # 3.1.2: Filesystem Images ####
     shinyFileChoose(input, 'images', roots = volumes, session = session)
-    
+
     output$filepaths_img <- renderPrint({
         if (is.integer(input$images)) {
             cat('No images have been selected...')
@@ -330,7 +330,7 @@ server <- function(input, output, session) {
             parseFilePaths(volumes, input$images)
         }
     })
-    
+
     ## create select data ui
     output$select_image_ui <- renderUI(
         if(input$stack){
@@ -343,7 +343,7 @@ server <- function(input, output, session) {
                                             status = 'primary',
                                             direction = 'vertical')),
                 column(2, numericInput('slice','Slice',min=1,max=NA,step=1, value=1)))
-            ) 
+            )
         } else {
             list(fluidRow(
                 column(4,selectInput(
@@ -354,10 +354,10 @@ server <- function(input, output, session) {
                                             status = 'primary',
                                             direction = 'vertical'))))
         }
-        
-        
+
+
     )
-    
+
     # update frames with action buttons
     observeEvent(input$prev_img, {
         if(input$stack){
@@ -368,26 +368,26 @@ server <- function(input, output, session) {
             updateNumericInput(session, inputId = 'slice', value = slice_update )
         } else {
             image_list <- parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull()
-            
+
             current_image <- which(image_list==input$select_image)
-            
+
             updateSelectInput(session,inputId='select_image', selected = image_list[current_image-1])
         }
-        
+
     })
-    
+
     observeEvent(input$next_img, {
         if(input$stack){
             slice_update <- input$slice + 1
             updateNumericInput(session, inputId = 'slice', value = slice_update )
         } else {
             image_list <- parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull()
-            current_image <- which(image_list==input$select_image) 
+            current_image <- which(image_list==input$select_image)
             updateSelectInput(session,inputId='select_image', selected = image_list[current_image+1])
         }
     })
-    
-    
+
+
     # 3.1.2.1: Image Viewer ####
     # A plot of fixed size
     output$img <- renderImage({
@@ -408,10 +408,10 @@ server <- function(input, output, session) {
         # Return a list
         list(src = tmpfile, contentType = 'image/jpg', height='100%')
     })
-    
-    
+
+
     # 3.2: View Data ####
-    
+
     # 3.3: Run VisumotR ####
     # 3.3.1: Frame ####
     # 3.3.1.1: Conditional Option UI ####
@@ -421,10 +421,10 @@ server <- function(input, output, session) {
             list(
                 checkboxGroupButtons(
                     inputId = 'map.select',
-                    choiceValues = c('color', 
+                    choiceValues = c('color',
                                 'shape'),
-                    choiceNames = c('Color','Shape'), 
-                    status = 'primary', 
+                    choiceNames = c('Color','Shape'),
+                    status = 'primary',
                     selected = 'color'
                 )
             )
@@ -432,11 +432,11 @@ server <- function(input, output, session) {
             list()
         }
     })
-    
+
     output$frame_select <- renderUI({
         sliderInput('frame', 'Frame:', min=1, max=df()%>%distinct(time)%>%nrow(), value=1)
     })
-    
+
     output$select_range <- renderUI({
         if(any(input$map.select=='color' & !is.null(input$par.map))) {
             if(df() %>% pull(input$par.map) %>% is.numeric()){
@@ -444,14 +444,14 @@ server <- function(input, output, session) {
                 max_value <- df() %>% select_(input$par.map) %>% pull() %>% max(na.rm = TRUE) %>% round(digits=1)
                 sliderInput('par.map.cont.range','Define range',value = c(min_value,max_value), min = min_value, max = max_value)
             }
-            
+
         } else {
             list()
         }
-        
+
     })
-    
-    # conditional options for mapping 
+
+    # conditional options for mapping
     output$par.map.options <- renderUI({
         ui_color <- list()
         ui_shape <- list()
@@ -468,18 +468,18 @@ server <- function(input, output, session) {
         }
         append(ui_color, ui_shape)
     })
-    
+
     # conditional options for subwindow
     output$sub_image_opt <- renderUI({
         if (input$sub_window) {
-            list(sliderInput('sub_n_col','Columns', value = 3, min=1, max=15, step = 1), 
+            list(sliderInput('sub_n_col','Columns', value = 3, min=1, max=15, step = 1),
                 sliderInput('sub_window_size', 'Windowsize', value = 50, min=5, max = 250, step = 5)
                 )
         } else {
             list()
         }
     })
-    # conditional options for points 
+    # conditional options for points
     output$points_opt <- renderUI({
         if(input$points){
             list(
@@ -491,9 +491,9 @@ server <- function(input, output, session) {
             list()
         }
     })
-    
-    
-    
+
+
+
     # conditional options for tracks
     output$tracks_opt <- renderUI({
         max_frame <- df()%>%distinct(time)%>%nrow()
@@ -508,9 +508,9 @@ server <- function(input, output, session) {
             list()
         }
     })
-    
+
     # conditional options for scalebar
-    
+
     output$scale_opt <- renderUI({
         if (input$scalebar) {
             list(
@@ -524,8 +524,8 @@ server <- function(input, output, session) {
             list()
         }
     })
-    
-    
+
+
     # update frames with action buttons
     observeEvent(input$frame_b, {
         current_frame <- input$frame
@@ -535,18 +535,18 @@ server <- function(input, output, session) {
         current_frame <- input$frame
         updateSliderInput(session,inputId='frame', value = current_frame+1)
     })
-    
-    
-    
+
+
+
     # 3.3.1.2: Run vismot_frame() ####
     frame_gg <- eventReactive(list(input$update_frame,input$frame_b,input$frame_f),{
         df_visu_frame <- df()
         if(any(input$map.select=='shape')){
             if(df()%>%pull(input$par.shape)%>%is.numeric()){
-                df_visu_frame <- df()%>%mutate_at(input$par.shape,as.factor) 
+                df_visu_frame <- df()%>%mutate_at(input$par.shape,as.factor)
             }
         }
-        
+
         visumot_frame(df_visu_frame,
                       frame = input$frame,
                       image = parseFilePaths(volumes, input$images) %>% slice(input$frame) %>% pull(datapath),
@@ -559,26 +559,26 @@ server <- function(input, output, session) {
                       tracks.alpha = input$tracks.alpha,
                       sub.img = input$sub_window,
                       sub.window = input$sub_window_size,
-                      sub.col = input$sub_n_col, 
+                      sub.col = input$sub_n_col,
                       par.min = input$par.map.cont.range[1],
                       par.max = input$par.map.cont.range[2],
                       par.map = input$par.map,
                       par.shape = input$par.shape,
                       image.normalize = input$normalize,
-                      scale.bar = input$scalebar, 
+                      scale.bar = input$scalebar,
                       scale.width = input$scale.width,
                       scale.height = input$scale.height,
                       scale.x = input$scale.x,
                       scale.y = input$scale.y,
                       scale.color = input$scale.color,
-                      axis.display = input$axis, 
+                      axis.display = input$axis,
                       stack = input$stack)
     }
     )
-    
+
     output$visumot_frame <- renderPlot(frame_gg())
-    
-    
+
+
     # 3.3.2: Summary ####
     output$summary_ui <- renderUI({
         columns_sum <- df() %>% colnames()
@@ -595,28 +595,28 @@ server <- function(input, output, session) {
             actionButton('refresh_sum','',icon = icon('refresh'))
         )
     })
-    
-    
+
+
     summary_gg <- eventReactive(input$refresh_sum,{
         visumot_summary(df(),
                         par.numeric=input$par.numeric,
                         group.vars=input$group.vars,
                         par.map=input$par.map.sum)
     })
-    
+
     output$visumot_summary <- renderPlot(summary_gg())
-    
-    
+
+
     # 3.3.3: Animation ####
-    
+
     observeEvent(input$run_all,{
         df_visu_frame <- df()
         if (any(input$map.select=='shape')) {
             if( df() %>% pull(input$par.shape) %>% is.numeric()) {
-                df_visu_frame <- df() %>% mutate_at(input$par.shape,as.factor) 
+                df_visu_frame <- df() %>% mutate_at(input$par.shape,as.factor)
             }
         }
-        
+
         frame_options = list(points.size = input$points.size,
                              points.alpha = input$points.alpha,
                              points.stat = input$points.stat,
@@ -626,25 +626,25 @@ server <- function(input, output, session) {
                              tracks.alpha = input$tracks.alpha,
                              sub.img = input$sub_window,
                              sub.window = input$sub_window_size,
-                             sub.col = input$sub_n_col, 
+                             sub.col = input$sub_n_col,
                              par.min = input$par.map.cont.range[1],
                              par.max = input$par.map.cont.range[2],
                              par.map = input$par.map,
                              par.shape = input$par.shape,
                              image.normalize = input$normalize,
-                             scale.bar = input$scalebar, 
+                             scale.bar = input$scalebar,
                              scale.width = input$scale.width,
                              scale.height = input$scale.height,
                              scale.x = input$scale.x,
                              scale.y = input$scale.y,
                              scale.color = input$scale.color,
-                             axis.display = input$axis, 
+                             axis.display = input$axis,
                              stack = input$stack)
-        
+
         summary_options = list(par.numeric=input$par.numeric,
                                group.vars=input$group.vars,
                                par.map=input$par.map.sum)
-        
+
         visumot_all(df_visu_frame,
                     images = parseFilePaths(volumes, input$images) %>% pull(datapath),
                     frame_range = c(input$frame.range[1],input$frame.range[2]),
@@ -657,18 +657,18 @@ server <- function(input, output, session) {
                     display_frame = ifelse(input$display %in% c('Frame','Both'), TRUE, FALSE)
                     )
     })
-    
-    
-    
+
+
+
     observeEvent(input$preview_frame,{
         output$preview_all <- renderImage({
             df_visu_frame <- df()
             if (any(input$map.select=='shape')) {
                 if( df() %>% pull(input$par.shape) %>% is.numeric()) {
-                    df_visu_frame <- df() %>% mutate_at(input$par.shape,as.factor) 
+                    df_visu_frame <- df() %>% mutate_at(input$par.shape,as.factor)
                 }
             }
-            
+
             frame_options = list(points.size = input$points.size,
                                  points.alpha = input$points.alpha,
                                  points.stat = input$points.stat,
@@ -678,25 +678,25 @@ server <- function(input, output, session) {
                                  tracks.alpha = input$tracks.alpha,
                                  sub.img = input$sub_window,
                                  sub.window = input$sub_window_size,
-                                 sub.col = input$sub_n_col, 
+                                 sub.col = input$sub_n_col,
                                  par.min = input$par.map.cont.range[1],
                                  par.max = input$par.map.cont.range[2],
                                  par.map = input$par.map,
                                  par.shape = input$par.shape,
                                  image.normalize = input$normalize,
-                                 scale.bar = input$scalebar, 
+                                 scale.bar = input$scalebar,
                                  scale.width = input$scale.width,
                                  scale.height = input$scale.height,
                                  scale.x = input$scale.x,
                                  scale.y = input$scale.y,
                                  scale.color = input$scale.color,
-                                 axis.display = input$axis, 
+                                 axis.display = input$axis,
                                  stack = input$stack)
-            
+
             summary_options = list(par.numeric=input$par.numeric,
                                    group.vars=input$group.vars,
                                    par.map=input$par.map.sum)
-            
+
             tmpfile <- visumot_all(df_visu_frame,
                                    images = parseFilePaths(volumes, input$images) %>% pull(datapath),
                                    frame_range = c(input$frame,input$frame),
@@ -709,17 +709,17 @@ server <- function(input, output, session) {
                                    display_frame = ifelse(input$display %in% c('Frame','Both'), TRUE, FALSE),
                                    save=FALSE,
                                    return = TRUE)
-            
+
             tmpfile <- tmpfile %>% image_write(tempfile(fileext='jpg'), format = 'jpg')
             # Return a list
             list(src = tmpfile, contentType = 'image/jpg', height='100%')
         })
     })
-   
 
-    
-    
-    
+
+
+
+
 }
 #______________________________________ ####
 
