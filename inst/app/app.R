@@ -1,4 +1,4 @@
-#### Shiny VisumotR ####
+#### Shiny VisuStatR ####
 #______________________________________ ####
 
 # 1: Load Libraries ####
@@ -32,10 +32,10 @@ sidebar <- dashboardSidebar(
         # menuItem('View Data', tabName = 'view', icon = icon('eye'),
         #          menuSubItem('Tracking Data', tabName = 'browse_data', icon = icon('line-chart')),
         #          menuSubItem('Image Files', tabName = 'browse_images', icon = icon('images'))),
-        menuItem('Run VisumotR', tabName = 'visumotR', icon = icon('laptop-code'),
-                 menuSubItem('Frame', tabName = 'visumot_frame', icon = icon('image')),
-                 menuSubItem('Summary', tabName = 'visumot_summary', icon = icon('bar-chart-o')),
-                 menuSubItem('Animation', tabName = 'visumot_all', icon = icon('film'))),
+        menuItem('Run VisuStatR', tabName = 'visustatR', icon = icon('laptop-code'),
+                 menuSubItem('Frame', tabName = 'visustat_frame', icon = icon('image')),
+                 menuSubItem('Summary', tabName = 'visustat_summary', icon = icon('bar-chart-o')),
+                 menuSubItem('Animation', tabName = 'visustat_all', icon = icon('film'))),
         menuItem('How to', tabName = 'how_to', icon = icon('mortar-board')),
         menuItem('About', tabName = 'about', icon = icon('question')))
     )
@@ -46,7 +46,9 @@ read_data <- tabItem(tabName = 'read_data', fluidRow(
     column(width=12,
            tabBox(width=NULL, title = 'Tracking Data',
                   tabPanel('Read In',
-                           'Select .csv files which contain your tracking data. Click on Read in Dataset to import the dataset and continue with the other tabs to prepare the dataset for using it with VisumotR.',
+                           'Select .csv files which contain your tracking data.
+                           Click on Read in Dataset to import the dataset and continue with
+                           the other tabs to prepare the dataset for using it with VisuStatR.',
                            hr(),
                            shinyFilesButton('file', ' Browse Files', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
                            br(),
@@ -60,7 +62,8 @@ read_data <- tabItem(tabName = 'read_data', fluidRow(
                            ),
                   tabPanel('Prepare Dataset',
                            'Please set the scaling factors to refer to pixel and frames as well as
-                           indicate which columns in your dataset correspond to track, time and X-, Y- and Z- positions. Then click Update dataframe to continue with the Run VisumotR tab.',
+                           indicate which columns in your dataset correspond to track, time and X-,
+                           Y- and Z- positions. Then click Update dataframe to continue with the Run VisuStatR tab.',
                            hr(),
                            fluidRow(
                                column(6,
@@ -105,7 +108,7 @@ read_images  <- tabItem(tabName = 'read_images', fluidRow(
 )
 
 # 2.1.3.3: Frame ####
-visumot_frame_tab <- tabItem(tabName = 'visumot_frame', fluidRow(
+visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
     column(width=3,
            box(width=NULL, title = 'Options',
                switchInput(label = 'Mapping',
@@ -158,7 +161,7 @@ visumot_frame_tab <- tabItem(tabName = 'visumot_frame', fluidRow(
                       labels = list(tags$span(icon('angle-left'),''), tags$span(icon('angle-right'),'')),
                       status = 'primary',
                       direction = 'vertical')),
-                      column(width=10,plotOutput('visumot_frame', height='800px')),
+                      column(width=10,plotOutput('visustat_frame', height='800px')),
                       column(width=1,actionButton('update_frame','',icon = icon('sync'), color = 'primary'),
                              actionButton('save_frame','', icon = icon('download'), color='primary')),
                   hr()
@@ -168,18 +171,18 @@ visumot_frame_tab <- tabItem(tabName = 'visumot_frame', fluidRow(
 )
 
 # 2.1.3.4: Summary ####
-visumot_sum_tab <- tabItem('visumot_summary', fluidRow(
+visustat_sum_tab <- tabItem('visustat_summary', fluidRow(
     column(width = 3,
            box(width = NULL, title = 'Options',
                uiOutput('summary_ui'))),
     column(width=9,
            box(width=NULL, title = 'Summary',
-           plotOutput('visumot_summary', height = 800)))
+           plotOutput('visustat_summary', height = 800)))
 
     )
 )
 # 2.1.3.5: Animation ####
-visumot_all_tab <- tabItem('visumot_all', fluidRow(
+visustat_all_tab <- tabItem('visustat_all', fluidRow(
     column(width = 2,
            box(width = NULL, title = 'Options',
                selectInput('display', 'Layout', choices = c('Frame','Summary','Both')),
@@ -213,7 +216,7 @@ about <- tabItem(tabName = 'about'
 
 # 2.1.4: Body ####
 body <- dashboardBody(
-    tabItems(read_data, read_images, visumot_frame_tab, visumot_sum_tab, visumot_all_tab, about))
+    tabItems(read_data, read_images, visustat_frame_tab, visustat_sum_tab, visustat_all_tab, about))
 
 
 
@@ -412,7 +415,7 @@ server <- function(input, output, session) {
 
     # 3.2: View Data ####
 
-    # 3.3: Run VisumotR ####
+    # 3.3: Run VisuStatR ####
     # 3.3.1: Frame ####
     # 3.3.1.1: Conditional Option UI ####
     # conditional sliders
@@ -538,7 +541,7 @@ server <- function(input, output, session) {
 
 
 
-    # 3.3.1.2: Run vismot_frame() ####
+    # 3.3.1.2: Run visustat_frame() ####
     frame_gg <- eventReactive(list(input$update_frame,input$frame_b,input$frame_f),{
         df_visu_frame <- df()
         if(any(input$map.select=='shape')){
@@ -547,7 +550,7 @@ server <- function(input, output, session) {
             }
         }
 
-        visumot_frame(df_visu_frame,
+        visustat_frame(df_visu_frame,
                       frame = input$frame,
                       image = parseFilePaths(volumes, input$images) %>% slice(input$frame) %>% pull(datapath),
                       points.size = input$points.size,
@@ -576,7 +579,7 @@ server <- function(input, output, session) {
     }
     )
 
-    output$visumot_frame <- renderPlot(frame_gg())
+    output$visustat_frame <- renderPlot(frame_gg())
 
 
     # 3.3.2: Summary ####
@@ -598,13 +601,13 @@ server <- function(input, output, session) {
 
 
     summary_gg <- eventReactive(input$refresh_sum,{
-        visumot_summary(df(),
+        visustat_summary(df(),
                         par.numeric=input$par.numeric,
                         group.vars=input$group.vars,
                         par.map=input$par.map.sum)
     })
 
-    output$visumot_summary <- renderPlot(summary_gg())
+    output$visustat_summary <- renderPlot(summary_gg())
 
 
     # 3.3.3: Animation ####
@@ -645,11 +648,11 @@ server <- function(input, output, session) {
                                group.vars=input$group.vars,
                                par.map=input$par.map.sum)
 
-        visumot_all(df_visu_frame,
+        visustat_all(df_visu_frame,
                     images = parseFilePaths(volumes, input$images) %>% pull(datapath),
                     frame_range = c(input$frame.range[1],input$frame.range[2]),
-                    visumot_frame.list = frame_options,
-                    visumot_summary.list = summary_options,
+                    visustat_frame.list = frame_options,
+                    visustat_summary.list = summary_options,
                     width=input$width,
                     height = input$height,
                     rel_width = input$rel_width,
@@ -697,11 +700,11 @@ server <- function(input, output, session) {
                                    group.vars=input$group.vars,
                                    par.map=input$par.map.sum)
 
-            tmpfile <- visumot_all(df_visu_frame,
+            tmpfile <- visustat_all(df_visu_frame,
                                    images = parseFilePaths(volumes, input$images) %>% pull(datapath),
                                    frame_range = c(input$frame,input$frame),
-                                   visumot_frame.list = frame_options,
-                                   visumot_summary.list = summary_options,
+                                   visustat_frame.list = frame_options,
+                                   visustat_summary.list = summary_options,
                                    width=input$width,
                                    height = input$height,
                                    rel_width = input$rel_width,

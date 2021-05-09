@@ -114,8 +114,6 @@ visustat_frame <- function(df, ...) {
   if (is.null(pars.list$frame)) {
     stop('Frame not specified.')
   }
-
-
   # check if mapping parameter is specified
   if (is.null(pars.list$par.map)) {
     pars.list$par.map <- colnames(df)[5]
@@ -142,15 +140,11 @@ visustat_frame <- function(df, ...) {
       pars.list$max <- df %>% select(c(pars.list$par.map)) %>% pull() %>% max(na.rm = TRUE)
     }
   }
-
-
-
   # add frames to df
   df <- df %>% mutate(frame=match(time, sort(unique(time))))
 
   # read in image
   image <- image_read(pars.list$image)
-
 
   # correct coordinate system for ggplot based on image properties
   image_height <- image_info(image) %>%
@@ -158,12 +152,12 @@ visustat_frame <- function(df, ...) {
     pull() %>%
     unique()
 
+  # set up ggplot coordinates and image coordinates
   df <- df %>%
     mutate(Y_img = Y,
            X_img = X,
            Y= image_height - Y,
            X = X-1)
-
 
   # select image from stack
   if(pars.list$stack==TRUE & pars.list$dimension == 2){
@@ -178,7 +172,7 @@ visustat_frame <- function(df, ...) {
     pars.list$width <- image_info(image) %>% select(width) %>% pull() %>% unique()
     pars.list$height <- image_info(image) %>% select(height) %>% pull() %>% unique()
     if (length(pars.list$width) != 1 | length(pars.list$height) != 1){
-      stop('VisuStatR detected different images sizes among the dataset and stopped. Please check your image files.')
+      stop('VisuStatR detected different image sizes among the dataset and stopped. Please check your image files.')
     }
   }
   # get pars for image stack
@@ -228,7 +222,6 @@ visustat_frame <- function(df, ...) {
                      layer='below'
                    )))
       }
-
     }
   )
 }
