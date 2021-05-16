@@ -3,10 +3,10 @@ Type: Package
 Title: Visualizing Statistics on Images in R
 Version: 0.1.0
 Author: Christoph Harmel
-Maintainer: Christoph Harmel <harmel@stud.uni-heidelberg.de>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: GPL-3
+Maintainer: Christoph Harmel <christoph.harmel@icloud.com>
+Description: VisuStatR fills an important gap to visually assess time-dependent summary statistics, which allows validation and critical interpretation of obtained quantities in comparison to the raw image data.
+    By its convenient graphical user interface, VisuStatR is directly accessible to biological researchers and represents a useful tool for the interpretation of live-cell microscopy data. 
+License: MIT+ 
 Encoding: UTF-8
 LazyData: true
 Depends: 

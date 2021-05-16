@@ -102,13 +102,13 @@ To be written...
 }
 \examples{
 # import tracking data
-df <- read.csv('hiv_tracking.csv')
+data('hiv_motility')
 # get image files
-images <- list.files(pattern='.tif')
+images <- hiv_motility_images()
 # run visustat_frame with default settings
-visustat_frame(df, image=images[1], frame=1)
+visustat_frame(hiv_motility, image=images[1], frame=1, image.normalize=1)
 # run visustat_frame with specified settings
-visustat_frame(df,
+visustat_frame(hiv_motility,
  image= images[1],
  frame = 1,
  tracks = c(34, 125, 199, 205),

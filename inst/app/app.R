@@ -29,9 +29,6 @@ sidebar <- dashboardSidebar(
         menuItem('Read Data', tabName = 'read', icon = icon('folder-open'),startExpanded = TRUE,
                  menuSubItem('Tracking Data', tabName = 'read_data', icon = icon('line-chart')),
                  menuSubItem('Image Files', tabName = 'read_images', icon = icon('images'))),
-        # menuItem('View Data', tabName = 'view', icon = icon('eye'),
-        #          menuSubItem('Tracking Data', tabName = 'browse_data', icon = icon('line-chart')),
-        #          menuSubItem('Image Files', tabName = 'browse_images', icon = icon('images'))),
         menuItem('Run VisuStatR', tabName = 'visustatR', icon = icon('laptop-code'),
                  menuSubItem('Frame', tabName = 'visustat_frame', icon = icon('image')),
                  menuSubItem('Summary', tabName = 'visustat_summary', icon = icon('bar-chart-o')),
@@ -42,70 +39,51 @@ sidebar <- dashboardSidebar(
 
 # 2.1.3: Tab Items ####
 # 2.1.3.1: Read Data ####
-read_data <- tabItem(tabName = 'read_data', fluidRow(
-    column(width=12,
-           tabBox(width=NULL, title = 'Tracking Data',
-                  tabPanel('Read In',
-                           'Select .csv files which contain your tracking data.
-                           Click on Read in Dataset to import the dataset and continue with
-                           the other tabs to prepare the dataset for using it with VisuStatR.',
-                           hr(),
-                           shinyFilesButton('file', ' Browse Files', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
-                           br(),
-                           br(),
-                           div(verbatimTextOutput('filepaths'), style= 'width:50%'),
-                           hr(),
-                           uiOutput('select_data'),
-                           actionButton('load_df', label = 'Read in', icon = icon('download')),
-                           hr(),
-                           uiOutput('df_table')
-                           ),
-                  tabPanel('Prepare Dataset',
-                           'Please set the scaling factors to refer to pixel and frames as well as
-                           indicate which columns in your dataset correspond to track, time and X-,
-                           Y- and Z- positions. Then click Update dataframe to continue with the Run VisuStatR tab.',
-                           hr(),
-                           fluidRow(
-                               column(6,
-                                      numericInput('scale_time','Time scaling', 1),
-                                      numericInput('scale_dim', 'Dimension scaling', 1),
-                                      radioGroupButtons('dims_df', 'Dimensions', choices = list('2D' = 2, '3D' = 3))),
-                               column(6, uiOutput('prepare_df'))),
-                           actionButton('update_df', 'Update dataframe', icon = icon('refresh')),
-                           hr(),
-                           uiOutput('df_table_prepared')
-                           )
-           )
-        )
-    )
-)
+read_data <- tabItem(tabName = 'read_data',
+           box(width=12, title = 'Tracking Data',
+               fluidRow(column(width = 2,
+                               shinyFilesButton('file', ' Browse Files', 'Please select file(s)',
+                                                multiple = TRUE, viewtype = 'detail',
+                                                icon = icon('folder'),
+                                                            style = "margin-top: +25px;")),
+                        column(width = 2,uiOutput('select_data')),
+                        column(width=2,actionButton('load_df', label = 'Read in', icon = icon('download'),
+                                                    style = "margin-top: +25px;")),
+                        column(width=4,actionButton('update_df', 'Update dataframe', icon = icon('refresh'),
+                                                    style = "margin-top: +25px;"))
+                        ),
+               fluidRow(
+                   column(width=2,
+                          numericInput('scale_dim', 'Dimension scaling', 1),
+                          radioGroupButtons('dims_df', 'Dimensions', choices = list('2D' = 2, '3D' = 3))),
+                   uiOutput('prepare_df')),
+               uiOutput('df_table'))
+            )
+
 
 
 # 2.1.3.2: Read Images ####
 read_images  <- tabItem(tabName = 'read_images', fluidRow(
     column(width=3,
            box(width=NULL, title = 'Image Specifications',
+               shinyFilesButton('images', 'Load Images', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
+               br(), hr(),
                radioGroupButtons('color_space', 'Color Space', choices = list('Grayscale'='gray', 'RGB'='rgb')),
                radioGroupButtons('bit_depth','Bit Depth', choices = list('8-bit'=8,'16-bit'=16,'32-bit'=32)),
                radioGroupButtons('dims_img', 'Dimensions', choices = list('2D'=2,'3D'=3)),
                radioGroupButtons('stack','Timeseries', choices = list('Multiple Files'=FALSE, 'Stack'=TRUE)),
                switchInput(label = 'Normalize',
                            inputId = 'normalize',
-                           value = FALSE))
-    ), column(width=9,
-              tabBox(width=NULL, height = '100%' ,title='Image Browser',
-                     tabPanel('Import',
-                              shinyFilesButton('images', 'Browse Images', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
-                              hr(),
-                              div(verbatimTextOutput('filepaths_img'), style= 'width:100%')),
-                     tabPanel('Viewer',
-                              uiOutput('select_image_ui'),
-                              hr(),
-                              imageOutput('img'),
-                              hr())
-                  ))
+                           value = FALSE)),hr()),
+    column(width=9,
+           box(width=NULL, height = '100%' ,title='Image Browser',
+               uiOutput('select_image_ui'),
+               hr(),
+               fillPage(imageOutput('img', height='400px')),
+               hr())
+           ))
 )
-)
+
 
 # 2.1.3.3: Frame ####
 visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
@@ -161,7 +139,7 @@ visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
                       labels = list(tags$span(icon('angle-left'),''), tags$span(icon('angle-right'),'')),
                       status = 'primary',
                       direction = 'vertical')),
-                      column(width=10,plotOutput('visustat_frame', height='800px')),
+                      column(width=10,plotOutput('visustat_frame', height='90vh')),
                       column(width=1,actionButton('update_frame','',icon = icon('sync'), color = 'primary'),
                              actionButton('save_frame','', icon = icon('download'), color='primary')),
                   hr()
@@ -189,7 +167,8 @@ visustat_all_tab <- tabItem('visustat_all', fluidRow(
                sliderInput('frame.range','Frame range', min=1, max = 120, value = c(1,120)),
                numericInput('width','Width',min=1, max=NA, value = 2000, step = 1),
                numericInput('height','Height',min=1, max=NA, value = 1200, step = 1),
-               numericInput('rel_width', 'Ratio', value = 0.65, step = 0.05, min = 0.05, max = 0.95))),
+               numericInput('rel_width', 'Ratio', value = 0.65, step = 0.05, min = 0.05, max = 0.95),
+               textInput('file_name',label='Filename', placeholder = 'Enter filename'))),
     column(width=10,
            box(width=NULL, title = 'Image Series Viewer',
                'When clicking Start rendering the image series with the options from the Frame and Summary panels will be rendered.
@@ -250,7 +229,7 @@ server <- function(input, output, session) {
     output$select_data <- renderUI({
         list(
             selectInput(
-                'tracking_data', 'Select dataset:',
+                'tracking_data', label = 'Dataset',
                 choices = parseFilePaths(volumes, input$file) %>% distinct(name) %>% pull()
             )
         )}
@@ -264,7 +243,7 @@ server <- function(input, output, session) {
     ## modify column names
 
     df <- eventReactive(input$update_df,{
-        vars <- c(track=input$track, time=input$time, X=input$X, Y=input$Y)
+        vars <- c(track=input$track, X=input$X, Y=input$Y)
         if (input$dims_df==3) {
             vars <- c(vars,Z=input$Z)
         }
@@ -276,26 +255,27 @@ server <- function(input, output, session) {
     ## UI for selecting X, Y, Z, time, and track columns
 
     output$prepare_df <- renderUI({
-        if (input$tracking_data=='') {
+        if (is.null(input$tracking_data)) {
             return(list())
         } else {
             columns <- df_raw() %>% colnames()
             column_names <- list(
-                selectInput('track','Track', choices = columns, selected = columns[1]),
-                selectInput('time', 'Time', choices = columns, selected = columns[2]),
-                selectInput('X', 'X position', choices = columns, selected = columns[3]),
-                selectInput('Y', 'Y position', choices = columns, selected = columns[4])
+                column(width=2,selectInput('track','Track', choices = columns, selected = columns[1]),
+                       selectInput('time', 'Time', choices = columns, selected = columns[2])),
+                column(width = 2,selectInput('X', 'X position', choices = columns, selected = columns[3]),
+                       selectInput('Y', 'Y position', choices = columns, selected = columns[4]))
             )
         }
         if (input$dims_df==3) {
-             column_names <- append(column_names,list(selectInput('Z', 'Z position', choices = columns, selected = columns[5])))
+             column_names <- append(column_names,list(column(width=2,selectInput('Z', 'Z position', choices = columns, selected = columns[5]))))
         }
         return(column_names)
     })
 
 
     ## 3.1.1.1: Dataframe Browser ####
-    output$df_raw <- renderDataTable({df_raw()}, options = list(scrollX = TRUE))
+    output$df_raw <- renderDataTable({df_raw()}, options = list(scrollX = TRUE, pageLength = 5,
+                                                                lengthMenu = c(5, 10, 25)))
 
     ## create ui
     observeEvent(input$load_df,{
@@ -309,11 +289,12 @@ server <- function(input, output, session) {
         })
     })
 
-    output$df_tracking <- renderDataTable({df()}, options = list(scrollX = TRUE))
+    output$df_tracking <- renderDataTable({df()}, options = list(scrollX = TRUE, pageLength = 5,
+                                                                 lengthMenu = c(5, 10, 25)))
 
     ## create ui
     observeEvent(input$update_df,{
-    output$df_table_prepared <- renderUI({
+    output$df_table <- renderUI({
         if(input$tracking_data==''){
             list()
         } else {
@@ -394,23 +375,26 @@ server <- function(input, output, session) {
     # 3.1.2.1: Image Viewer ####
     # A plot of fixed size
     output$img <- renderImage({
-        if(input$select_image==''){
+        if(is.null(input$select_image)){
+            tmpfile <- image_blank(400,400,color='white')
+        } else if (input$select_image==""){
             tmpfile <- image_blank(400,400,color='white')
         } else {
             tmpfile <- image_read(parseFilePaths(volumes, input$images) %>%
                                       filter(name == input$select_image) %>%
                                       pull(datapath))
+            if(input$stack){
+                tmpfile <- tmpfile[input$slice]
+            }
+            if(input$normalize){
+                tmpfile <- tmpfile %>% image_normalize()
+            }
         }
-        if(input$stack){
-            tmpfile <- tmpfile[input$slice]
-        }
-        if(input$normalize){
-            tmpfile <- tmpfile %>% image_normalize()
-        }
+
         tmpfile <- tmpfile %>% image_write(tempfile(fileext='jpg'), format = 'jpg')
         # Return a list
         list(src = tmpfile, contentType = 'image/jpg', height='100%')
-    })
+    }, deleteFile = TRUE)
 
 
     # 3.2: View Data ####

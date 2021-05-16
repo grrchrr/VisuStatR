@@ -11,9 +11,10 @@ visustat_check(df, images, stack_time = FALSE, dimensions = 2)
 
 \item{images}{\code{vector}: filenames of images ordered by frames/time}
 
-\item{stack}{\code{logical}: default: \code{FALSE}, single image file provided if time-resolved imagestack is used, set: \code{TRUE}
-#' @param dimensions \code{numeric}: specify whether the images are 2D or 3D.
+\item{dimensions}{\code{numeric}: specify whether the images are 2D or 3D.
 If 3D is selected data is assumed to be in the form: \code{df(track, time, X, Y, Z, mapping paramters, ...)}}
+
+\item{stack}{\code{logical}: default: \code{FALSE}, single image file provided if time-resolved imagestack is used, set: \code{TRUE}}
 }
 \description{
 Gives a summary that allows to check the linking between a passed dataframe

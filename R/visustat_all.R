@@ -59,7 +59,7 @@ visustat_all <- function(df, images, stack=FALSE, frame_range = NULL,
   #' @param browse \code{logical}: browse output with default system application for tiffs, e.g. imageJ
   #' @param return \code{logical}: return images-series as magick image-stack
 
-  message(paste('Started visustatR: ', Sys.time(), sep = ''))
+  message(paste('Started VisuStatR: ', Sys.time(), sep = ''))
   # extracting parameter lists
   temp.dir.frame <- NULL
   temp.dir.sum <- NULL

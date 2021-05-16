@@ -3,20 +3,23 @@
 #' @details  To be written...
 #' @examples
 #' # import tracking data
-#' df <- read.csv('hiv_tracking.csv')
+#' data('hiv_motility')
 #' # get image files
-#' images <- list.files(pattern='.tif')
+#' images <- hiv_motility_images()
 #' # run visustat_frame with default settings
-#' visustat_frame(df, image=images[1], frame=1)
+#' visustat_frame(hiv_motility, image=images[15], frame=15, image.normalize=1)
 #' # run visustat_frame with specified settings
-#' visustat_frame(df,
-#'  image= images[1],
-#'  frame = 1,
-#'  tracks = c(34, 125, 199, 205),
-#'  scale.bar = TRUE,
-#'  scale.bar.color = 'red',
-#'  par.map='speed',
-#'  par.shape='contact'
+#' visustat_frame(hiv_motility,
+#'    image = images[15],
+#'    frame = 15,
+#'    tracks = c(48, 66, 102, 108),
+#'    sub.img = TRUE,
+#'    sub.col = 2,
+#'    sub.window= 300,
+#'    par.map ='speed',
+#'    par.shape ='type',
+#'    points.size=2,
+#'    image.normalize=1
 #'  )
 
 #' @export

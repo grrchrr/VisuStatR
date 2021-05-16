@@ -9,9 +9,6 @@ visustat_shiny()
 \description{
 With visustat_shiny, you can run all functionalities of the VisuStatR package in a shiny app.
 }
-\details{
-To be written...
-}
 \examples{
- visustat_shiny()
+visustat_shiny()
 }

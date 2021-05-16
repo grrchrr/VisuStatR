@@ -9,7 +9,7 @@ visustat_check <- function(df, images, stack_time=FALSE, dimensions=2){
   #' @param df dataframe of the form: \code{df(track, time, X, Y, (Z,) mapping_parameters, ...)}
   #' @param images \code{vector}: filenames of images ordered by frames/time
   #' @param stack \code{logical}: default: \code{FALSE}, single image file provided if time-resolved imagestack is used, set: \code{TRUE}
-  #' #' @param dimensions \code{numeric}: specify whether the images are 2D or 3D.
+  #' @param dimensions \code{numeric}: specify whether the images are 2D or 3D.
   #' If 3D is selected data is assumed to be in the form: \code{df(track, time, X, Y, Z, mapping paramters, ...)}
 
   # add frames to dataframe
@@ -30,7 +30,4 @@ visustat_check <- function(df, images, stack_time=FALSE, dimensions=2){
   } else {
     message('VisuStatR detected differing number of timepoints in the dataset and images. Please check your dataset and image files or be careful.')
   }
-
-
-
 }
