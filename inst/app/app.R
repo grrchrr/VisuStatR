@@ -14,6 +14,7 @@ library(shinydashboard)
 library(shinyFiles)
 library(shinyWidgets)
 library(colourpicker)
+library(shinyBS)
 #______________________________________ ####
 
 # 2: UI elements ####
@@ -67,6 +68,7 @@ read_images  <- tabItem(tabName = 'read_images', fluidRow(
     column(width=3,
            box(width=NULL, title = 'Image Specifications',
                shinyFilesButton('images', 'Load Images', 'Please select file(s)', multiple = TRUE, viewtype = 'detail', icon = icon('folder')),
+               checkboxInput('example_images', 'Use example images'),
                br(), hr(),
                radioGroupButtons('color_space', 'Color Space', choices = list('Grayscale'='gray', 'RGB'='rgb')),
                radioGroupButtons('bit_depth','Bit Depth', choices = list('8-bit'=8,'16-bit'=16,'32-bit'=32)),
@@ -94,58 +96,70 @@ visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
                            value = TRUE
                ),
                uiOutput('par.map'),
-               uiOutput('par.map.options'),
-               hr(),
-               switchInput(label = 'Subwindow',
-                   inputId = 'sub_window',
-                   value = FALSE
+                       uiOutput('par.map.options'),
+               fluidRow(column(width=9, switchInput(label = 'Subwindow',
+                                                    inputId = 'sub_window',
+                                                    value = FALSE)),
+                        column(width=1, actionButton('subwindow_settings','', icon=icon('gear')))),
+               bsModal('popup_subwindow_settings','Subwindow Options','subwindow_settings',
+                       sliderInput('sub_n_col','Columns', value = 3, min=1, max=15, step = 1),
+                       sliderInput('sub_window_size', 'Windowsize', value = 50, min=5, max = 250, step = 5)
+                       ),
+               fluidRow(column(width=9, switchInput(label = 'Tracks',
+                                                    inputId = 'tracks',
+                                                    value = TRUE)),
+                        column(width=1, actionButton('tracks_settings','', icon=icon('gear')))),
+               bsModal('popup_tracks_settings','Tracks Options','tracks_settings',
+                       uiOutput('tracks_opt')),
+               fluidRow(column(width=9, switchInput(label = 'Points',
+                                                    inputId = 'points',
+                                                    value = TRUE)),
+                        column(width=1, actionButton('points_settings','', icon=icon('gear')))),
+               bsModal('popup_points_settings','Point Options','points_settings',
+                       sliderInput('points.size','Size', value = 1, min = 1, max=20, step = 1),
+                       sliderInput('points.alpha','Alpha', value = 0.75, min=0, max = 1, step = 0.05),
+                       radioGroupButtons('points.stat','Blur',choices = list('On'='echo', 'Off'='identity'))),
+               fluidRow(column(width=9, switchInput(label = 'Scalebar',
+                                                   inputId = 'scalebar',
+                                                   value = FALSE)),
+                        column(width=1, actionButton('scale_settings','', icon=icon('gear')))),
+               bsModal('popup_scale_settings','Scalebar Options','scale_settings',
+                       numericInput('scale.width','Width',min = 1, max= NA, value = 40),
+                       numericInput('scale.height', 'Height', min=1, max = NA, value=10),
+                       numericInput('scale.x', 'X offset', min=1, max=NA, value = 10),
+                       numericInput('scale.y', 'Y offset', min=1, max=NA, value = 10),
+                       colourInput('scale.color','Color',value = 'grey70')
+                       ),
+               fluidRow(column(width=9,switchInput(label = 'Axis',
+                                                   inputId = 'axis',
+                                                   value = FALSE)),
+                        column(width=1, actionButton('axis_settings','', icon=icon('gear')))),
+               bsModal('popup_axis_settings','Axis Options','axis_settings',
+                       switchInput('axis.display','Display Axis'),
+                       switchInput('axis.labs','Display Labels'),
+                       textInput('unit','Unit:', value = 'px'),
+                       numericInput('scaling', 'Scale by:', min=NA, max=NA, value=1),
+                       numericInput('axis.tick','Ticks:', min = 1, value=NULL, max=3000))
                ),
-               uiOutput('sub_image_opt'),
-               hr(),
-               switchInput(label = 'Tracks',
-                           inputId = 'tracks',
-                           value = TRUE
-               ),
-               uiOutput('tracks_opt'),
-               hr(),
-               switchInput(label = 'Points',
-                           inputId = 'points',
-                           value = TRUE
-               ),
-               uiOutput('points_opt'),
-               hr(),
-               switchInput(label = 'Scalebar',
-                           inputId = 'scalebar',
-                           value = FALSE
-               ),
-               uiOutput('scale_opt'),
-               hr(),
-               switchInput(label = 'Axis',
-                           inputId = 'axis',
-                           value = FALSE
-               ),
-               switchInput(label = '3D',
-                           inputId = 'dims_3d',
-                           value = FALSE
-               )
-
-               )
+    box(width = NULL, title = NULL,
+                     fluidRow(column(width=9,
+                                downloadButton('save_frame','Download', icon = icon('download'), color='primary')),
+                         column(width=3,
+                                actionButton('download_settings','',icon = icon('gear')))),
+        bsModal('popup_download_settings', 'Download Settings', 'download_settings',
+                selectInput('file_format','Format:',choices = c('png','pdf','jpeg')),
+                selectInput('unit_download','Unit:', choices=c('cm','in')),
+                numericInput('resolution','DPI:',min=10, max=600, value=300),
+                numericInput('width','Width:',min=1, max=100, value=10),
+                numericInput('height','Height:',min=1, max=100, value=10))),
     ), column(width=9,
-              box(width=NULL, title='Viewer',
+              box(width=NULL, height = '90vh', title='Viewer',
                   uiOutput('frame_select'),
                   hr(),
-                  fluidRow(column(width = 1, actionGroupButtons(
-                      inputIds = c('frame_b', 'frame_f'),
-                      labels = list(tags$span(icon('angle-left'),''), tags$span(icon('angle-right'),'')),
-                      status = 'primary',
-                      direction = 'vertical')),
-                      column(width=10,plotOutput('visustat_frame', height='90vh')),
-                      column(width=1,actionButton('update_frame','',icon = icon('sync'), color = 'primary'),
-                             actionButton('save_frame','', icon = icon('download'), color='primary')),
-                  hr()
+                  div(plotOutput('visustat_frame', height='75vh'), align='center'),
                   )
-              ))
-)
+              )
+    )
 )
 
 # 2.1.3.4: Summary ####
@@ -230,18 +244,21 @@ server <- function(input, output, session) {
         list(
             selectInput(
                 'tracking_data', label = 'Dataset',
-                choices = parseFilePaths(volumes, input$file) %>% distinct(name) %>% pull()
+                choices = c(parseFilePaths(volumes, input$file) %>% distinct(name) %>% pull(),'hiv_motility_example')
             )
         )}
     )
 
     ## read in dataframe
     df_raw <- eventReactive(input$load_df,{
-        read.csv(parseFilePaths(volumes, input$file) %>% filter(name == input$tracking_data) %>% pull(datapath)) %>% as_tibble()
+        if(input$tracking_data=='hiv_motility_example'){
+            hiv_motility
+        } else {
+            read.csv(parseFilePaths(volumes, input$file) %>% filter(name == input$tracking_data) %>% pull(datapath)) %>% as_tibble()
+        }
     })
 
     ## modify column names
-
     df <- eventReactive(input$update_df,{
         vars <- c(track=input$track, X=input$X, Y=input$Y)
         if (input$dims_df==3) {
@@ -249,7 +266,6 @@ server <- function(input, output, session) {
         }
         df_raw() %>% rename(vars)
     })
-
 
 
     ## UI for selecting X, Y, Z, time, and track columns
@@ -305,15 +321,20 @@ server <- function(input, output, session) {
     })
 
     # 3.1.2: Filesystem Images ####
+
     shinyFileChoose(input, 'images', roots = volumes, session = session)
 
-    output$filepaths_img <- renderPrint({
-        if (is.integer(input$images)) {
-            cat('No images have been selected...')
+    images <- reactive({
+        if(input$example_images){
+            tibble(hiv_motility_images()) %>% rename(datapath=`hiv_motility_images()`) %>% mutate(name=str_extract(datapath,'loose.+'))
         } else {
             parseFilePaths(volumes, input$images)
         }
+
     })
+
+
+
 
     ## create select data ui
     output$select_image_ui <- renderUI(
@@ -321,7 +342,7 @@ server <- function(input, output, session) {
             list(fluidRow(
                 column(4,selectInput(
                     'select_image', 'Image',
-                    choices = parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull())),
+                    choices = images() %>% distinct(name) %>% pull())),
                 column(1,actionGroupButtons(inputIds=c('prev_img','next_img'),
                                             labels = list(tags$span(icon('angle-up'),''), tags$span(icon('angle-down'),'')),
                                             status = 'primary',
@@ -332,7 +353,7 @@ server <- function(input, output, session) {
             list(fluidRow(
                 column(4,selectInput(
                     'select_image', 'Image',
-                    choices = parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull())),
+                    choices = images() %>% distinct(name) %>% pull())),
                 column(1,actionGroupButtons(inputIds=c('prev_img','next_img'),
                                             labels = list(tags$span(icon('angle-up'),''), tags$span(icon('angle-down'),'')),
                                             status = 'primary',
@@ -351,7 +372,7 @@ server <- function(input, output, session) {
             }
             updateNumericInput(session, inputId = 'slice', value = slice_update )
         } else {
-            image_list <- parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull()
+            image_list <- images() %>% distinct(name) %>% pull()
 
             current_image <- which(image_list==input$select_image)
 
@@ -365,7 +386,7 @@ server <- function(input, output, session) {
             slice_update <- input$slice + 1
             updateNumericInput(session, inputId = 'slice', value = slice_update )
         } else {
-            image_list <- parseFilePaths(volumes, input$images) %>% distinct(name) %>% pull()
+            image_list <- images() %>% distinct(name) %>% pull()
             current_image <- which(image_list==input$select_image)
             updateSelectInput(session,inputId='select_image', selected = image_list[current_image+1])
         }
@@ -380,7 +401,7 @@ server <- function(input, output, session) {
         } else if (input$select_image==""){
             tmpfile <- image_blank(400,400,color='white')
         } else {
-            tmpfile <- image_read(parseFilePaths(volumes, input$images) %>%
+            tmpfile <- image_read(images() %>%
                                       filter(name == input$select_image) %>%
                                       pull(datapath))
             if(input$stack){
@@ -405,33 +426,41 @@ server <- function(input, output, session) {
     # conditional sliders
     output$par.map <- renderUI({
         if(input$mapping){
-            list(
-                checkboxGroupButtons(
-                    inputId = 'map.select',
-                    choiceValues = c('color',
-                                'shape'),
-                    choiceNames = c('Color','Shape'),
-                    status = 'primary',
-                    selected = 'color'
-                )
-            )
+            list(fluidRow(
+                column(width=9,
+                       checkboxGroupButtons(inputId = 'map.select',choiceValues = c('color','shape'),
+                                            choiceNames = c('Color','Shape'),
+                                            status = 'primary',
+                                            selected = 'color',
+                                            justified=TRUE)),
+                column(width=1, actionButton('map_settings', '',icon=icon('gear')))
+
+            ))
         } else {
             list()
         }
     })
 
     output$frame_select <- renderUI({
-        sliderInput('frame', 'Frame:', min=1, max=df()%>%distinct(time)%>%nrow(), value=1)
+        fluidRow(
+            column(width = 2, align="center", div(actionGroupButtons(
+                inputIds = c('frame_b', 'frame_f'),
+                labels = list(tags$span(icon('angle-left'),''), tags$span(icon('angle-right'),'')),
+                status = 'primary',
+                direction = 'horizontal')),
+                style = "margin-top: +15px;"),
+            column(width = 7, align="center",
+                   sliderInput('frame', NULL, min=1, max=df()%>%distinct(time)%>%nrow(), value=1, step = 1)),
+            column(width=1, align="center",
+                   actionButton('update_frame','',icon = icon('sync'), color = 'primary', style = "margin-top: +15px;"))
+        )
     })
 
     output$select_range <- renderUI({
-        if(any(input$map.select=='color' & !is.null(input$par.map))) {
-            if(df() %>% pull(input$par.map) %>% is.numeric()){
-                min_value <- df() %>% select_(input$par.map) %>% pull() %>% min(na.rm = TRUE) %>% round(digits=1)
-                max_value <- df() %>% select_(input$par.map) %>% pull() %>% max(na.rm = TRUE) %>% round(digits=1)
-                sliderInput('par.map.cont.range','Define range',value = c(min_value,max_value), min = min_value, max = max_value)
-            }
-
+        if(df() %>% pull(input$par.map) %>% is.numeric()){
+            min_value <- df() %>% select_(input$par.map) %>% pull() %>% min(na.rm = TRUE) %>% round(digits=1)
+            max_value <- df() %>% select_(input$par.map) %>% pull() %>% max(na.rm = TRUE) %>% round(digits=1)
+            sliderInput('par.map.cont.range','Define range',value = c(min_value,max_value), min = min_value, max = max_value)
         } else {
             list()
         }
@@ -440,78 +469,24 @@ server <- function(input, output, session) {
 
     # conditional options for mapping
     output$par.map.options <- renderUI({
-        ui_color <- list()
-        ui_shape <- list()
-        if(input$mapping){
-            if(any(input$map.select=='color')) {
-                ui_color <- list(selectInput('par.map',
-                                             'Color parameter',
-                                             choices = df() %>% colnames()),
-                                uiOutput('select_range'))
-            }
-            if(any(input$map.select=='shape')){
-                ui_shape <- list(selectInput('par.shape','Shape parameter', choices = df() %>% colnames()))
-            }
-        }
-        append(ui_color, ui_shape)
+        list(bsModal('popup_maps_settings','Parameter Mapping Options','map_settings',
+                     selectInput('par.map','Color parameter',
+                             choices = df() %>% colnames()),
+                                uiOutput('select_range'),
+                     selectInput('par.shape','Shape parameter', choices = df() %>% select_if(is.character)%>%colnames())
+        ))
     })
-
-    # conditional options for subwindow
-    output$sub_image_opt <- renderUI({
-        if (input$sub_window) {
-            list(sliderInput('sub_n_col','Columns', value = 3, min=1, max=15, step = 1),
-                sliderInput('sub_window_size', 'Windowsize', value = 50, min=5, max = 250, step = 5)
-                )
-        } else {
-            list()
-        }
-    })
-    # conditional options for points
-    output$points_opt <- renderUI({
-        if(input$points){
-            list(
-                sliderInput('points.size','Size', value = 1, min = 1, max=20, step = 1),
-                sliderInput('points.alpha','Alpha', value = 0.75, min=0, max = 1, step = 0.05),
-                radioGroupButtons('points.stat','Blur',choices = list('On'='echo', 'Off'='identity'))
-            )
-        } else {
-            list()
-        }
-    })
-
-
 
     # conditional options for tracks
     output$tracks_opt <- renderUI({
         max_frame <- df()%>%distinct(time)%>%nrow()
-        if(input$tracks){
             list(
                 sliderInput('tracks.length', 'Length', value=max_frame, min = 0, max=max_frame, step = 1),
                 sliderInput('tracks.size', 'Size', value = 1, min = 1, max = 20, step = 1),
                 sliderInput('tracks.alpha', 'Alpha', value = 0.5, min=0, max = 1, step = 0.05),
                 selectizeInput('tracks_select','Filter tracks',choices=df()%>%distinct(track)%>%pull(), selected=NULL, multiple=TRUE)
             )
-        } else {
-            list()
-        }
     })
-
-    # conditional options for scalebar
-
-    output$scale_opt <- renderUI({
-        if (input$scalebar) {
-            list(
-                numericInput('scale.width','Width',min = 1, max= NA, value = 40),
-                numericInput('scale.height', 'Height', min=1, max = NA, value=10),
-                numericInput('scale.x', 'X offset', min=1, max=NA, value = 10),
-                numericInput('scale.y', 'Y offset', min=1, max=NA, value = 10),
-                colourInput('scale.color','Color',value = 'grey70')
-            )
-        } else {
-            list()
-        }
-    })
-
 
     # update frames with action buttons
     observeEvent(input$frame_b, {
@@ -524,8 +499,58 @@ server <- function(input, output, session) {
     })
 
 
-
     # 3.3.1.2: Run visustat_frame() ####
+    options <- reactive({
+        opt.list <- list(frame = input$frame,
+                         image = images() %>% slice(input$frame) %>% pull(datapath),
+                         points.size = input$points.size,
+                         points.alpha = input$points.alpha,
+                         points.stat = input$points.stat,
+                         tracks = input$tracks_select,
+                         tracks.size = input$tracks.size,
+                         tracks.length = input$tracks.length,
+                         tracks.alpha = input$tracks.alpha,
+                         sub.img = input$sub_window,
+                         sub.window = input$sub_window_size,
+                         sub.col = input$sub_n_col,
+                         par.min = input$par.map.cont.range[1],
+                         par.max = input$par.map.cont.range[2],
+                         par.map = input$par.map,
+                         par.shape = input$par.shape,
+                         image.normalize = input$normalize,
+                         scale.bar = input$scalebar,
+                         scale.width = input$scale.width,
+                         scale.height = input$scale.height,
+                         scale.x = input$scale.x,
+                         scale.y = input$scale.y,
+                         scale.color = input$scale.color,
+                         axis.display = input$axis,
+                         stack = input$stack)
+
+        if(is.null(opt.list$par.min)){
+            opt.list['par.min'] <- NaN
+        }
+        if(is.null(opt.list$par.max)){
+            opt.list['par.max'] <- NaN
+        }
+        if(is.null(opt.list$tracks.size)){
+            opt.list['tracks.size'] <- 1
+        }
+        if(is.null(opt.list$tracks.alpha)){
+            opt.list['tracks.alpha'] <- 0.5
+        }
+        if(is.null(input$map.select)){
+            opt.list['par.display'] <- FALSE
+        }
+        if(input$tracks==FALSE) {
+            opt.list['tracks.alpha'] <- 0
+        }
+        if(input$points==FALSE){
+            opt.list['points.alpha'] <- 0
+        }
+        return(opt.list)
+        })
+
     frame_gg <- eventReactive(list(input$update_frame,input$frame_b,input$frame_f),{
         df_visu_frame <- df()
         if(any(input$map.select=='shape')){
@@ -533,33 +558,10 @@ server <- function(input, output, session) {
                 df_visu_frame <- df()%>%mutate_at(input$par.shape,as.factor)
             }
         }
-
+        browser()
         visustat_frame(df_visu_frame,
-                      frame = input$frame,
-                      image = parseFilePaths(volumes, input$images) %>% slice(input$frame) %>% pull(datapath),
-                      points.size = input$points.size,
-                      points.alpha = input$points.alpha,
-                      points.stat = input$points.stat,
-                      tracks = input$tracks_select,
-                      tracks.size = input$tracks.size,
-                      tracks.length = input$tracks.length,
-                      tracks.alpha = input$tracks.alpha,
-                      sub.img = input$sub_window,
-                      sub.window = input$sub_window_size,
-                      sub.col = input$sub_n_col,
-                      par.min = input$par.map.cont.range[1],
-                      par.max = input$par.map.cont.range[2],
-                      par.map = input$par.map,
-                      par.shape = input$par.shape,
-                      image.normalize = input$normalize,
-                      scale.bar = input$scalebar,
-                      scale.width = input$scale.width,
-                      scale.height = input$scale.height,
-                      scale.x = input$scale.x,
-                      scale.y = input$scale.y,
-                      scale.color = input$scale.color,
-                      axis.display = input$axis,
-                      stack = input$stack)
+                       options(),
+                       all.list=TRUE)
     }
     )
 
@@ -645,8 +647,6 @@ server <- function(input, output, session) {
                     )
     })
 
-
-
     observeEvent(input$preview_frame,{
         output$preview_all <- renderImage({
             df_visu_frame <- df()
@@ -704,7 +704,19 @@ server <- function(input, output, session) {
     })
 
 
+    # 3.4: Download ####
+    output$save_frame <- downloadHandler(
+        filename = function(){paste("visustat_frame_",Sys.Date(),'.', input$file_format, sep = '')},
+        content = function(file){
+                ggsave(file, plot = frame_gg(),
+                       device = input$file_format,
+                       unit = input$unit_download,
+                       width = input$width,
+                       height = input$height,
+                       dpi = input$resolution)
 
+            }
+    )
 
 
 }
