@@ -178,9 +178,9 @@ visustat_all_tab <- tabItem('visustat_all', fluidRow(
     column(width = 2,
            box(width = NULL, title = 'Options',
                selectInput('display', 'Layout', choices = c('Frame','Summary','Both')),
-               sliderInput('frame.range','Frame range', min=1, max = 120, value = c(1,120)),
-               numericInput('width','Width',min=1, max=NA, value = 2000, step = 1),
-               numericInput('height','Height',min=1, max=NA, value = 1200, step = 1),
+               uiOutput('animation_range'),
+               numericInput('width_all','Width',min=1, max=NA, value = 2000, step = 1),
+               numericInput('height_all','Height',min=1, max=NA, value = 1200, step = 1),
                numericInput('rel_width', 'Ratio', value = 0.65, step = 0.05, min = 0.05, max = 0.95),
                textInput('file_name',label='Filename', placeholder = 'Enter filename'))),
     column(width=10,
@@ -500,7 +500,7 @@ server <- function(input, output, session) {
 
 
     # 3.3.1.2: Run visustat_frame() ####
-    options <- reactive({
+    frame_options <- reactive({
         opt.list <- list(frame = input$frame,
                          image = images() %>% slice(input$frame) %>% pull(datapath),
                          points.size = input$points.size,
@@ -558,9 +558,8 @@ server <- function(input, output, session) {
                 df_visu_frame <- df()%>%mutate_at(input$par.shape,as.factor)
             }
         }
-        browser()
         visustat_frame(df_visu_frame,
-                       options(),
+                       frame_options(),
                        all.list=TRUE)
     }
     )
@@ -597,6 +596,12 @@ server <- function(input, output, session) {
 
 
     # 3.3.3: Animation ####
+    output$animation_range <- renderUI({
+        list(sliderInput('frame.range','Frame range',
+                         min=1,max=df()%>%distinct(time)%>%nrow(),
+                         value=c(1,df()%>%distinct(time)%>%nrow()),
+                         step = 1))
+    })
 
     observeEvent(input$run_all,{
         df_visu_frame <- df()
@@ -606,41 +611,19 @@ server <- function(input, output, session) {
             }
         }
 
-        frame_options = list(points.size = input$points.size,
-                             points.alpha = input$points.alpha,
-                             points.stat = input$points.stat,
-                             tracks = input$tracks_select,
-                             tracks.size = input$tracks.size,
-                             tracks.length = input$tracks.length,
-                             tracks.alpha = input$tracks.alpha,
-                             sub.img = input$sub_window,
-                             sub.window = input$sub_window_size,
-                             sub.col = input$sub_n_col,
-                             par.min = input$par.map.cont.range[1],
-                             par.max = input$par.map.cont.range[2],
-                             par.map = input$par.map,
-                             par.shape = input$par.shape,
-                             image.normalize = input$normalize,
-                             scale.bar = input$scalebar,
-                             scale.width = input$scale.width,
-                             scale.height = input$scale.height,
-                             scale.x = input$scale.x,
-                             scale.y = input$scale.y,
-                             scale.color = input$scale.color,
-                             axis.display = input$axis,
-                             stack = input$stack)
-
         summary_options = list(par.numeric=input$par.numeric,
                                group.vars=input$group.vars,
                                par.map=input$par.map.sum)
+        frame_options <- frame_options()
+        frame_options[c('frame','image')] <- NULL
 
         visustat_all(df_visu_frame,
-                    images = parseFilePaths(volumes, input$images) %>% pull(datapath),
+                    images = images() %>% pull(datapath),
                     frame_range = c(input$frame.range[1],input$frame.range[2]),
                     visustat_frame.list = frame_options,
                     visustat_summary.list = summary_options,
-                    width=input$width,
-                    height = input$height,
+                    width=input$width_all,
+                    height = input$height_all,
                     rel_width = input$rel_width,
                     display_summary = ifelse(input$display %in% c('Summary','Both'), TRUE, FALSE),
                     display_frame = ifelse(input$display %in% c('Frame','Both'), TRUE, FALSE)
@@ -656,41 +639,18 @@ server <- function(input, output, session) {
                 }
             }
 
-            frame_options = list(points.size = input$points.size,
-                                 points.alpha = input$points.alpha,
-                                 points.stat = input$points.stat,
-                                 tracks = input$tracks_select,
-                                 tracks.size = input$tracks.size,
-                                 tracks.length = input$tracks.length,
-                                 tracks.alpha = input$tracks.alpha,
-                                 sub.img = input$sub_window,
-                                 sub.window = input$sub_window_size,
-                                 sub.col = input$sub_n_col,
-                                 par.min = input$par.map.cont.range[1],
-                                 par.max = input$par.map.cont.range[2],
-                                 par.map = input$par.map,
-                                 par.shape = input$par.shape,
-                                 image.normalize = input$normalize,
-                                 scale.bar = input$scalebar,
-                                 scale.width = input$scale.width,
-                                 scale.height = input$scale.height,
-                                 scale.x = input$scale.x,
-                                 scale.y = input$scale.y,
-                                 scale.color = input$scale.color,
-                                 axis.display = input$axis,
-                                 stack = input$stack)
-
             summary_options = list(par.numeric=input$par.numeric,
                                    group.vars=input$group.vars,
                                    par.map=input$par.map.sum)
-
+            frame_options <- frame_options()
+            frame_options[c('frame','image')] <- NULL
             tmpfile <- visustat_all(df_visu_frame,
-                                   images = parseFilePaths(volumes, input$images) %>% pull(datapath),
+                                   images = images() %>% pull(datapath),
                                    frame_range = c(input$frame,input$frame),
                                    visustat_frame.list = frame_options,
                                    visustat_summary.list = summary_options,
-                                   width=input$width,
-                                   height = input$height,
+                                   width=input$width_all,
+                                   height = input$height_all,
                                    rel_width = input$rel_width,
                                    display_summary = ifelse(input$display %in% c('Summary','Both'), TRUE, FALSE),
                                    display_frame = ifelse(input$display %in% c('Frame','Both'), TRUE, FALSE),
