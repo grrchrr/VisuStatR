@@ -47,7 +47,7 @@ read_data <- tabItem(tabName = 'read_data',
                                                 multiple = TRUE, viewtype = 'detail',
                                                 icon = icon('folder'),
                                                             style = "margin-top: +25px;")),
-                        column(width = 2,uiOutput('select_data')),
+                        column(width = 3,uiOutput('select_data')),
                         column(width=2,actionButton('load_df', label = 'Read in', icon = icon('download'),
                                                     style = "margin-top: +25px;")),
                         column(width=4,actionButton('update_df', 'Update dataframe', icon = icon('refresh'),
@@ -150,13 +150,12 @@ visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
                 selectInput('file_format','Format:',choices = c('png','pdf','jpeg')),
                 selectInput('unit_download','Unit:', choices=c('cm','in')),
                 numericInput('resolution','DPI:',min=10, max=600, value=300),
-                numericInput('width','Width:',min=1, max=100, value=10),
-                numericInput('height','Height:',min=1, max=100, value=10))),
+                numericInput('width','Width:',min=1, max=100, value=20),
+                numericInput('height','Height:',min=1, max=100, value=20))),
     ), column(width=9,
               box(width=NULL, height = '90vh', title='Viewer',
                   uiOutput('frame_select'),
-                  hr(),
-                  div(plotOutput('visustat_frame', height='75vh'), align='center'),
+                  div(plotOutput('visustat_frame', height = '65vh'), align='center'),
                   )
               )
     )
@@ -169,7 +168,7 @@ visustat_sum_tab <- tabItem('visustat_summary', fluidRow(
                uiOutput('summary_ui'))),
     column(width=9,
            box(width=NULL, title = 'Summary',
-           plotOutput('visustat_summary', height = 800)))
+           plotOutput('visustat_summary')))
 
     )
 )
@@ -186,18 +185,19 @@ visustat_all_tab <- tabItem('visustat_all', fluidRow(
     column(width=10,
            box(width=NULL, title = 'Image Series Viewer',
                'When clicking Start rendering the image series with the options from the Frame and Summary panels will be rendered.
-               You can preview the output of single frames in order to be sure everything is of your liking.',
+               You can preview the output of single frames in order to be sure everything is of your liking. Resulting animations will be saved to your current working directory.',
                hr(),
                actionButton('preview_frame', 'Update Preview', icon = icon('refresh')),
                actionGroupButtons(inputIds = c('next_preview', 'prev_preview'),
                                   labels = list(tags$span(icon('angle-left'),''), tags$span(icon('angle-right'),'')),
                                   status = 'primary'),
+               actionButton('run_all','Start rendering', icon = icon('refresh')),
                hr(),
                br(),
                imageOutput('preview_all'),
                br(),
-               hr(),
-               actionButton('run_all','Start rendering', icon = icon('refresh'))))
+               hr()
+               ))
 
 )
 )
@@ -573,8 +573,8 @@ server <- function(input, output, session) {
         list(
             selectizeInput('par.numeric','Summary statistics',choices = columns_sum, multiple=TRUE),
             selectInput('group.vars', 'Time ', choices = columns_sum, selected = columns_sum[2]),
+            selectizeInput('tracks_select_sum','Filter tracks',choices=df()%>%distinct(track)%>%pull(), selected=NULL, multiple=TRUE),
             selectInput('par.map.sum', 'Color', choices = columns_sum),
-            selectInput('par.shape.sum', 'Shape', choices = columns_sum),
             selectInput('ribbon', 'Show Ribbon', choices = list('Show'=TRUE,
                                                                 'Hide'=FALSE)),
             selectInput('ribbon.stat', 'Ribbon statistic', choices = list('Standard deviation'='sd',
@@ -589,7 +589,10 @@ server <- function(input, output, session) {
         visustat_summary(df(),
                         par.numeric=input$par.numeric,
                         group.vars=input$group.vars,
-                        par.map=input$par.map.sum)
+                        par.map=input$par.map.sum,
+                        tracks=input$tracks_select_sum,
+                        ribbon=input$ribbon,
+                        ribbon.stat=input$ribbon.stat)
     })
 
     output$visustat_summary <- renderPlot(summary_gg())
@@ -604,6 +607,7 @@ server <- function(input, output, session) {
     })
 
     observeEvent(input$run_all,{
+        withProgress(message = 'Running visustat_all()...', value = 1, expr = {
         df_visu_frame <- df()
         if (any(input$map.select=='shape')) {
             if( df() %>% pull(input$par.shape) %>% is.numeric()) {
@@ -628,9 +632,11 @@ server <- function(input, output, session) {
                     display_summary = ifelse(input$display %in% c('Summary','Both'), TRUE, FALSE),
                     display_frame = ifelse(input$display %in% c('Frame','Both'), TRUE, FALSE)
                     )
+        })
     })
 
     observeEvent(input$preview_frame,{
+        withProgress(message = 'Running visustat_all()...', value = 1, expr = {
         output$preview_all <- renderImage({
             df_visu_frame <- df()
             if (any(input$map.select=='shape')) {
@@ -660,6 +666,7 @@ server <- function(input, output, session) {
             tmpfile <- tmpfile %>% image_write(tempfile(fileext='jpg'), format = 'jpg')
             # Return a list
             list(src = tmpfile, contentType = 'image/jpg', height='100%')
+        })
         })
     })
 
