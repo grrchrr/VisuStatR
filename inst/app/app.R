@@ -507,6 +507,7 @@ server <- function(input, output, session) {
                          points.alpha = input$points.alpha,
                          points.stat = input$points.stat,
                          tracks = input$tracks_select,
+                         par.display = input$mapping,
                          tracks.size = input$tracks.size,
                          tracks.length = input$tracks.length,
                          tracks.alpha = input$tracks.alpha,
@@ -527,26 +528,29 @@ server <- function(input, output, session) {
                          axis.display = input$axis,
                          stack = input$stack)
 
-        if(is.null(opt.list$par.min)){
+        if (is.null(opt.list$par.min)) {
             opt.list['par.min'] <- NaN
         }
-        if(is.null(opt.list$par.max)){
+        if (is.null(opt.list$par.max)) {
             opt.list['par.max'] <- NaN
         }
-        if(is.null(opt.list$tracks.size)){
+        if (is.null(opt.list$tracks.size)) {
             opt.list['tracks.size'] <- 1
         }
-        if(is.null(opt.list$tracks.alpha)){
+        if (is.null(opt.list$tracks.alpha)) {
             opt.list['tracks.alpha'] <- 0.5
         }
-        if(is.null(input$map.select)){
+        if (is.null(input$map.select)) {
             opt.list['par.display'] <- FALSE
         }
-        if(input$tracks==FALSE) {
+        if (input$tracks == FALSE) {
             opt.list['tracks.alpha'] <- 0
         }
-        if(input$points==FALSE){
+        if (input$points == FALSE) {
             opt.list['points.alpha'] <- 0
+        }
+        if (!('shape' %in% input$map.select)) {
+            opt.list['par.shape'] <- NULL
         }
         return(opt.list)
         })
@@ -558,6 +562,7 @@ server <- function(input, output, session) {
                 df_visu_frame <- df()%>%mutate_at(input$par.shape,as.factor)
             }
         }
+        browser()
         visustat_frame(df_visu_frame,
                        frame_options(),
                        all.list=TRUE)

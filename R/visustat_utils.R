@@ -223,27 +223,39 @@ plot_frame <- function(df, image, pars.list){
       df <-  df %>% filter(frame >= pars.list$frame - pars.list$tracks.length)
   }
   # set aesthetics
-  if (is.null(pars.list$par.shape)) {
-    p <- ggplot(df %>% filter(frame <= pars.list$frame),
-                aes_(x = ~X,
-                     y = ~Y,
-                     group = ~track,
-                     col = as.name(pars.list$par.map))) +
-      labs(x = paste0('X [', pars.list$unit,']'),
-           y = paste0('Y [', pars.list$unit,']'),
-           color = pars.list$label.col)
+  if (pars.list$par.display) {
+    if (is.null(pars.list$par.shape)) {
+      p <- ggplot(df %>% filter(frame <= pars.list$frame),
+                  aes_(x = ~X,
+                       y = ~Y,
+                       group = ~track,
+                       col = as.name(pars.list$par.map))) +
+        labs(x = paste0('X [', pars.list$unit,']'),
+             y = paste0('Y [', pars.list$unit,']'),
+             color = pars.list$label.col)
+    } else {
+      p <- ggplot(df %>% filter(frame <= pars.list$frame),
+                  aes_(x = ~X,
+                       y = ~Y,
+                       group = ~track,
+                       col = as.name(pars.list$par.map),
+                       shape = as.name(pars.list$par.shape))) +
+        labs(x = paste0('X [', pars.list$unit,']'),
+             y = paste0('Y [', pars.list$unit,']'),
+             color = pars.list$label.col,
+             shape = str_to_sentence(pars.list$par.shape))
+    }
   } else {
     p <- ggplot(df %>% filter(frame <= pars.list$frame),
                 aes_(x = ~X,
                      y = ~Y,
                      group = ~track,
-                     col = as.name(pars.list$par.map),
-                     shape = as.name(pars.list$par.shape))) +
+                     col = 'red')) +
       labs(x = paste0('X [', pars.list$unit,']'),
-           y = paste0('Y [', pars.list$unit,']'),
-           color = pars.list$label.col,
-           shape = str_to_sentence(pars.list$par.shape))
+           y = paste0('Y [', pars.list$unit,']')) +
+      theme(legend.position = 'none')
   }
+
   # set theme and fixed coords
   p <- p +
     theme(plot.margin = unit(c(2,2,2,2),'mm'),
@@ -306,22 +318,26 @@ plot_frame <- function(df, image, pars.list){
                  size = pars.list$points.size)
   }
   # add continuous color scale
-  if (is.numeric(df[pars.list$par.map] %>% pull())) {
-    if (str_count(pars.list$label.col, "\\S+") > 1) {
-      p <- p + scale_color_viridis_c(limits = c(pars.list$par.min,pars.list$par.max),
-                                     na.value = 'red',
-                                     guide = guide_colorbar(title.position = 'left',
-                                                            title.theme = element_text(angle = 90),
-                                                            label.position = 'right',
-                                                            title.hjust = 0.5))
-    } else {
-      p <- p + scale_colour_viridis_c(limits = c(pars.list$par.min,pars.list$par.max),
-                                      na.value = 'red')
+  if (pars.list$par.display) {
+    if (is.numeric(df[pars.list$par.map] %>% pull())) {
+      if (str_count(pars.list$label.col, "\\S+") > 1) {
+        p <- p + scale_color_viridis_c(limits = c(pars.list$par.min,pars.list$par.max),
+                                       na.value = 'red',
+                                       guide = guide_colorbar(title.position = 'left',
+                                                              title.theme = element_text(angle = 90),
+                                                              label.position = 'right',
+                                                              title.hjust = 0.5))
+      } else {
+        p <- p + scale_colour_viridis_c(limits = c(pars.list$par.min,pars.list$par.max),
+                                        na.value = 'red')
+      }
     }
   }
   # add discrete color scale
-  if (is.factor(df[pars.list$par.map] %>% pull()) | is.character(df[pars.list$par.map] %>% pull()) ) {
-    p <- p + scale_colour_viridis_d(na.value = 'red')
+  if (pars.list$par.display) {
+    if (is.factor(df[pars.list$par.map] %>% pull()) | is.character(df[pars.list$par.map] %>% pull()) ) {
+      p <- p + scale_colour_viridis_d(na.value = 'red')
+    }
   }
   # add scale bar
   if (pars.list$scale.bar == TRUE) {
@@ -360,53 +376,70 @@ plot_frame_sub <- function(df, image, pars.list){
   plots <- vector("list",length = length(pars.list$tracks))
 
   # set aesthetics
-  if (is.null(pars.list$par.shape)) {
-    p <- ggplot(df %>% filter(frame <= pars.list$frame),
-                aes_(x = ~X,
-                     y = ~Y,
-                     group = ~track,
-                     col = as.name(pars.list$par.map))) +
-      labs(x = paste0('X [', pars.list$unit,']'),
-           y = paste0('Y [', pars.list$unit,']'),
-           color = pars.list$label.col)
+  if (pars.list$par.display) {
+    if (is.null(pars.list$par.shape)) {
+      p <- ggplot(df %>% filter(frame <= pars.list$frame),
+                  aes_(x = ~X,
+                       y = ~Y,
+                       group = ~track,
+                       col = as.name(pars.list$par.map))) +
+        labs(x = paste0('X [', pars.list$unit,']'),
+             y = paste0('Y [', pars.list$unit,']'),
+             color = pars.list$label.col)
+    } else {
+      p <- ggplot(df %>% filter(frame <= pars.list$frame),
+                  aes_(x = ~X,
+                       y = ~Y,
+                       group = ~track,
+                       col = as.name(pars.list$par.map),
+                       shape = as.name(pars.list$par.shape))) +
+        labs(x = paste0('X [', pars.list$unit,']'),
+             y = paste0('Y [', pars.list$unit,']'),
+             color = pars.list$label.col,
+             shape = str_to_sentence(pars.list$par.shape))
+    }
   } else {
     p <- ggplot(df %>% filter(frame <= pars.list$frame),
                 aes_(x = ~X,
                      y = ~Y,
                      group = ~track,
-                     col = as.name(pars.list$par.map),
-                     shape = as.name(pars.list$par.shape))) +
+                     col = 'red')) +
       labs(x = paste0('X [', pars.list$unit,']'),
-           y = paste0('Y [', pars.list$unit,']'),
-           color = pars.list$label.col,
-           shape = str_to_sentence(pars.list$par.shape))
+           y = paste0('Y [', pars.list$unit,']')) +
+      theme(legend.position = 'none')
   }
+
   # add continuous color scale
-  if (is.numeric(df[pars.list$par.map] %>% pull())) {
-    if (str_count(pars.list$label.col, "\\S+") > 1) {
-      p <- p + scale_color_viridis_c(limits = c(pars.list$par.min, pars.list$par.max),
-                                     na.value = 'red',
-                                     guide = guide_colorbar(title.position = 'left',
-                                                            title.theme = element_text(angle = 90),
-                                                            label.position = 'right',
-                                                            title.hjust = 0.5))
-    } else {
-      p <- p + scale_colour_viridis_c(limits = c(pars.list$par.min, pars.list$par.max),
-                                      na.value = 'red')
+  if (pars.list$par.display) {
+    if (is.numeric(df[pars.list$par.map] %>% pull())) {
+      if (str_count(pars.list$label.col, "\\S+") > 1) {
+        p <- p + scale_color_viridis_c(limits = c(pars.list$par.min, pars.list$par.max),
+                                       na.value = 'red',
+                                       guide = guide_colorbar(title.position = 'left',
+                                                              title.theme = element_text(angle = 90),
+                                                              label.position = 'right',
+                                                              title.hjust = 0.5))
+      } else {
+        p <- p + scale_colour_viridis_c(limits = c(pars.list$par.min, pars.list$par.max),
+                                        na.value = 'red')
+      }
     }
+    # add discrete color scale
+    if (is.factor(df[pars.list$par.map] %>% pull()) | is.character(df[pars.list$par.map] %>% pull()) ) {
+      p <- p + scale_colour_viridis_d(na.value = 'red')
+    }
+
+    # get legend
+    legend <- get_legend(p + geom_point())
   }
-  # add discrete color scale
-  if (is.factor(df[pars.list$par.map] %>% pull()) | is.character(df[pars.list$par.map] %>% pull()) ) {
-    p <- p + scale_colour_viridis_d(na.value = 'red')
-  }
+
   # set theme
   p <- p + theme(plot.margin = unit(c(2,2,2,2),'mm'),
                  panel.grid.major = element_blank(),
                  panel.grid.minor = element_blank()) +
     coord_fixed()
 
-  # get legend
-  legend <- get_legend(p + geom_point())
+
 
   # subplots
   for (i in c(1:length(pars.list$tracks))) {
@@ -429,7 +462,7 @@ plot_frame_sub <- function(df, image, pars.list){
          annotate("text",
                   x = pars.list$tracks.label.x,
                   y = pars.list$tracks.label.y,
-                  label = ifelse(pars.list$tracks.label==1, pars.list$tracks[i],NULL),
+                  label = ifelse(pars.list$tracks.label == 1, pars.list$tracks[i], NULL),
                   col = pars.list$scale.color) +
          coord_fixed() +
          scale_x_continuous(limits = c(1, pars.list$sub.window),
@@ -448,7 +481,7 @@ plot_frame_sub <- function(df, image, pars.list){
              annotate("text",
                       x = pars_plot[['x_min']] + pars.list$tracks.label.x,
                       y = pars_plot[['y_min']] + pars.list$tracks.label.y,
-                      label = ifelse(pars.list$tracks.label==1, pars.list$tracks[i],NULL),
+                      label = ifelse(pars.list$tracks.label == 1, pars.list$tracks[i], NULL),
                       col = pars.list$scale.color) +
              geom_point(data = df %>% filter(frame == pars.list$frame),
                         alpha = pars.list$points.alpha,
@@ -472,7 +505,7 @@ plot_frame_sub <- function(df, image, pars.list){
            annotate("text",
                     x = pars_plot[['x_min']] + pars.list$tracks.label.x,
                     y = pars_plot[['y_min']] + pars.list$tracks.label.y,
-                    label = ifelse(pars.list$tracks.label==1, pars.list$tracks[i],NULL),
+                    label = ifelse(pars.list$tracks.label == 1, pars.list$tracks[i], NULL),
                     col = pars.list$scale.color) +
            geom_path(alpha = pars.list$tracks.alpha,
                      size = pars.list$tracks.size) +
@@ -503,8 +536,13 @@ plot_frame_sub <- function(df, image, pars.list){
   }
   # putting all plots together
   collage <- arrangeGrob(grobs = plots, ncol = pars.list$sub.col)
-  p2 <- plot_grid(collage, NULL , legend, NULL, rel_widths = c(10, 0.5, 1, 0.5), ncol = 4)
-  return(p2)
+  if (pars.list$par.display) {
+    p2 <- plot_grid(collage, NULL , legend, NULL, rel_widths = c(10, 0.5, 1, 0.5), ncol = 4)
+    return(p2)
+  } else {
+    return(plot_grid(collage))
+  }
+
 }
 
 # Z-projection for 3D-image stacks
