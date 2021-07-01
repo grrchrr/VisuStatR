@@ -28,8 +28,8 @@ header <- dashboardHeader(title = 'VisuStatR')
 sidebar <- dashboardSidebar(
     sidebarMenu(
         menuItem('Read Data', tabName = 'read', icon = icon('folder-open'),startExpanded = TRUE,
-                 menuSubItem('Tracking Data', tabName = 'read_data', icon = icon('line-chart')),
-                 menuSubItem('Image Files', tabName = 'read_images', icon = icon('images'))),
+                 menuSubItem('Image Files', tabName = 'read_images', icon = icon('images')),
+                 menuSubItem('Tracking Data', tabName = 'read_data', icon = icon('line-chart'))),
         menuItem('Run VisuStatR', tabName = 'visustatR', icon = icon('laptop-code'),
                  menuSubItem('Frame', tabName = 'visustat_frame', icon = icon('image')),
                  menuSubItem('Summary', tabName = 'visustat_summary', icon = icon('bar-chart-o')),
@@ -93,8 +93,15 @@ visustat_frame_tab <- tabItem(tabName = 'visustat_frame', fluidRow(
                            inputId = 'mapping',
                            value = TRUE
                ),
-               uiOutput('par.map'),
-                       uiOutput('par.map.options'),
+               fluidRow(
+                   column(width = 9,
+                          checkboxGroupButtons(inputId = 'map.select',choiceValues = c('color','shape'),
+                                               choiceNames = c('Color','Shape'),
+                                               status = 'primary',
+                                               selected = 'color',
+                                               justified = TRUE)),
+                   column(width = 1, actionButton('map_settings', '',  icon = icon('gear')))),
+               uiOutput('par.map.options'),
                fluidRow(column(width = 9, switchInput(label = 'Subwindow',
                                                     inputId = 'sub_window',
                                                     value = FALSE)),
@@ -422,23 +429,6 @@ server <- function(input, output, session) {
     # 3.3: Run VisuStatR ####
     # 3.3.1: Frame ####
     # 3.3.1.1: Conditional Option UI ####
-    # conditional sliders
-    output$par.map <- renderUI({
-        if (input$mapping) {
-            list(fluidRow(
-                column(width = 9,
-                       checkboxGroupButtons(inputId = 'map.select',choiceValues = c('color','shape'),
-                                            choiceNames = c('Color','Shape'),
-                                            status = 'primary',
-                                            selected = 'color',
-                                            justified = TRUE)),
-                column(width = 1, actionButton('map_settings', '',  icon = icon('gear')))
-
-            ))
-        } else {
-            list()
-        }
-    })
 
     output$frame_select <- renderUI({
         fluidRow(
@@ -449,9 +439,7 @@ server <- function(input, output, session) {
                 direction = 'horizontal')),
                 style = "margin-top: +15px;"),
             column(width = 7, align = "center",
-                   sliderInput('frame', NULL, min = 1, max = df() %>%
-                                   distinct(time) %>%
-                                   nrow(), value = 1, step = 1)),
+                   sliderInput('frame', NULL, min = 1, max = images() %>% nrow(), value = 1, step = 1)),
             column(width = 1, align = "center",
                    actionButton('update_frame','',
                                 icon = icon('sync'), color = 'primary', style = "margin-top: +15px;"))
@@ -505,7 +493,7 @@ server <- function(input, output, session) {
 
 
     # 3.3.1.2: Run visustat_frame() ####
-    frame_options <- reactive({
+    frame_options <- eventReactive(list(input$update_frame,input$frame_b,input$frame_f),{
         opt.list <- list(frame = input$frame,
                          image = images() %>% slice(input$frame) %>% pull(datapath),
                          points.size = input$points.size,
@@ -567,14 +555,15 @@ server <- function(input, output, session) {
                 df_visu_frame <- df() %>% mutate_at(input$par.shape,as.factor)
             }
         }
-        browser()
         visustat_frame(df_visu_frame,
                        frame_options(),
                        all.list = TRUE)
     }
     )
+    observeEvent(list(input$update_frame,input$frame_b,input$frame_f),{
+        output$visustat_frame <- renderPlot(frame_gg())
+    })
 
-    output$visustat_frame <- renderPlot(frame_gg())
 
 
     # 3.3.2: Summary ####
