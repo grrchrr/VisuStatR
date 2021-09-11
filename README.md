@@ -20,7 +20,7 @@ VisuStatR allows for several display modes. The most common is shown above where
 ### Color-mapping combined with summary statistics
 Each output-type of `visustat_frame()` can be combined with the output from `visustat_summary()`.
 
-![Output from visustat_frame() combined with visustat_summary()](images/frame_summary.jpg)
+![Output from visustat_frame() combined with visustat_summary()](man/figures/frame_summary.jpg)
 
 ### Follow single tracks within sub-windows
 The output of `visustat_frame()` does not need to be the whole image. It can be cropped manually or automatically or create sub-windows that allow to follow individual tracks, that might be interesting due to prior performed statistical analysis that highlighted for example outliers.
