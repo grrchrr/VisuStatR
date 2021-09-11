@@ -8,7 +8,7 @@
 #' # get image files
 #' images <- hiv_motility_images()
 #' # run visustatR with default settings
-#' visustat_all(hiv_motility, images)
+#' visustat_all(hiv_motility, images, save=FALSE)
 #' # run visustatR with visustat_frame and visustat_summary
 #' tracks <- c(34, 125, 199, 205)
 #' summary_pars <- list(par.map='angle', time.unit='min', tracks=tracks)
@@ -19,7 +19,8 @@
 #'  display_summary = 1,
 #'  visustat_frame.list = frame_pars,
 #'  visustat_summary.list = summary_pars,
-#'  file_name = 'hiv_tracking_angle'
+#'  file_name = 'hiv_tracking_angle',
+#'  save=FALSE
 #'  )
 
 #' @export
