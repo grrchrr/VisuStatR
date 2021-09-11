@@ -40,11 +40,10 @@ visustat_summary(df, ...)
 \item{unit}{\code{character}: setting name of unit; default: \code{'px'}}
 }
 \description{
-To be written...
-}
-\details{
-To be written...
+With \code{visustat_summary}, time-resolved summary statistics are calculated. In correspondence to \code{visustat_frame} continuous and discrete parameters can be mapped individually on color and shape.
+ In addition, the population mean and either standard deviations, confidence intervals or standard errors for respective statistics can be displayed as facetted ribbon plots.
 }
 \examples{
-visustat_summary()
+data(hiv_motility)
+visustat_summary(hiv_motility \%>\% na.omit(), par.map="speed", tracks=c(48, 66, 102, 108))
 }

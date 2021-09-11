@@ -1,8 +1,10 @@
 #' @title visustat_check
 #' @description Gives a summary that allows to check the linking between a passed dataframe
 #'  and images in a frame-wise manner.
-#' @details To be written...
-#' @examples To be written...
+#' @examples
+#' data(hiv_motility)
+#' images <- hiv_motility_images()
+#' visustat_check(hiv_motility, images)
 
 #' @export
 visustat_check <- function(df, images, stack_time=FALSE, dimensions=2){

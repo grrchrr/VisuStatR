@@ -95,10 +95,7 @@ sub.img or crop modes.}
 returns a ggplot2 plot-object which can be further modified
 }
 \description{
-With visustat_frame, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint.
-}
-\details{
-To be written...
+With \code{visustat_frame}, continuous and discrete parameters can be mapped individually on color, shape and size for one timepoint.
 }
 \examples{
 # import tracking data
@@ -106,15 +103,18 @@ data('hiv_motility')
 # get image files
 images <- hiv_motility_images()
 # run visustat_frame with default settings
-visustat_frame(hiv_motility, image=images[1], frame=1, image.normalize=1)
+visustat_frame(hiv_motility, image=images[15], frame=15, image.normalize=1)
 # run visustat_frame with specified settings
 visustat_frame(hiv_motility,
- image= images[1],
- frame = 1,
- tracks = c(34, 125, 199, 205),
- scale.bar = TRUE,
- scale.bar.color = 'red',
- par.map='speed',
- par.shape='contact'
+   image = images[15],
+   frame = 15,
+   tracks = c(48, 66, 102, 108),
+   sub.img = TRUE,
+   sub.col = 2,
+   sub.window= 300,
+   par.map ='speed',
+   par.shape ='type',
+   points.size=2,
+   image.normalize=1
  )
 }

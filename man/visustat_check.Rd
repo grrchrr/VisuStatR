@@ -20,9 +20,8 @@ If 3D is selected data is assumed to be in the form: \code{df(track, time, X, Y,
 Gives a summary that allows to check the linking between a passed dataframe
  and images in a frame-wise manner.
 }
-\details{
-To be written...
-}
 \examples{
-To be written...
+data(hiv_motility)
+images <- hiv_motility_images()
+visustat_check(hiv_motility, images)
 }

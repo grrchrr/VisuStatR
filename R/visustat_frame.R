@@ -1,6 +1,5 @@
 #' @title visustat_frame
-#' @description With visustat_frame, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint.
-#' @details  To be written...
+#' @description With \code{visustat_frame}, continuous and discrete parameters can be mapped individually on color, shape and size for one timepoint.
 #' @examples
 #' # import tracking data
 #' data('hiv_motility')

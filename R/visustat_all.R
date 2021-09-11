@@ -2,21 +2,20 @@
 #' @description Creates time-resolved images series of tracking data with modifiable parameter mapping.
 #' \code{visustat_all} is a wrapper function for \code{\link{visustat_frame}} and \code{\link{visustat_summary}}. User parameters for both
 #' functions can be passed via the lists \code{visustat_frame.list} and \code{visustat_summary.list}.
-#' @details To be written...
 #' @examples
 #' # import tracking data
-#' df <- read.csv('hiv_tracking.csv')
+#' data(hiv_motility)
 #' # get image files
-#' images <- list.files(pattern='.tif')
+#' images <- hiv_motility_images()
 #' # run visustatR with default settings
-#' visustat_all(df, images)
+#' visustat_all(hiv_motility, images)
 #' # run visustatR with visustat_frame and visustat_summary
 #' tracks <- c(34, 125, 199, 205)
 #' summary_pars <- list(par.map='angle', time.unit='min', tracks=tracks)
-#' frame_pars <- list(par.map='angle', par.shape='infected', tracks=tracks)
-#' visustat_all(df,
+#' frame_pars <- list(par.map='angle', par.shape='type', tracks=tracks)
+#' visustat_all(hiv_motility,
 #'  images,
-#'  frame_range = c(20,100),
+#'  frame_range = c(1,10),
 #'  display_summary = 1,
 #'  visustat_frame.list = frame_pars,
 #'  visustat_summary.list = summary_pars,

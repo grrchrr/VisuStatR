@@ -10,4 +10,5 @@
 #'
 #' @examples
 #' data(hiv_motility)
+#' hiv_motility
 NULL

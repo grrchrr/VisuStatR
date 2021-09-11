@@ -1,6 +1,11 @@
 #### Shiny VisuStatR ####
 #______________________________________ ####
 
+packages <- c("shiny", "rlang", "magrittr", "VisuStatR","DT","shinythemes","shinydashboard",
+              "shinyFiles","shinyWidgets","colourpicker","shinyBS")
+
+install.packages(setdiff(packages, rownames(installed.packages())))
+
 # 1: Load Libraries ####
 library(shiny)
 library(rlang)
