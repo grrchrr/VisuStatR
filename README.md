@@ -36,11 +36,24 @@ In addition to the functionality as an R-package, VisuStatR can be completely us
 ![Shiny screenshot](man/figures/app_visustat_frame.png)
 
 ## Install VisuStatR
+
+VisuStatR was developed as an R-package under version 4.0.4 and requires the previous installation of R  (https://cran.r-project.org). It depends on the R packages *tidyverse, ggplot2, plotly, Rmisc, cowplot, doSNOW, facetscales, foreach, ggecho, grid, gridExtra, magick, parallel, shiny, shinydashboard* and *rlang*. 
+These packages can be installed into your R-environment from CRAN, as e.g. by typing the following command in your R-console.
+
+```{r}
+install.packages(“packagename”)
+```
+Alternatively, use respective installation functions within the integrative development environment RStudio (https://www.rstudio.com). Some of the packages are not available on CRAN and need to be installed via devtools. This includes *foreach* and *ggecho*.
+
 ```{r}
 # install dependencies which are not found on CRAN
 devtools::install_github("zeehio/facetscales")
 remotes::install_github("coolbutuseless/ggecho")
+```
 
+VisuStatR is then installed directly from GitHub via the following command:
+
+```{r}
 # install VisuStatR from git repo
 devtools::install_git("https://github.com/grrchrr/VisuStatR")
 ```
