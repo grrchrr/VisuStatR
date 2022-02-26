@@ -6,7 +6,14 @@
  
 Live-cell microscopy has become an essential tool for analyzing dynamic processes in various biological applications. To critically assess the influence of individual cells on the calculated summary statistics, and to detect heterogeneous cell populations or possible confounding factors, such as misclassified or -tracked objects, a direct mapping of gained statistical information onto the actual image data is necessary. VisuStatR allows to visualize time-resolved motility parameters or any other summary statistic onto images in R. Originally, this package was intended to be used with live-cell microscopy images and cell-tracking data. But in general VisuStatR can be used with any kind of data supplying a dataframe with trackIds, time and spatial coordinates (2D/3D), as well as numeric or discrete mapping parameters and corresponding images.
 
+VisuStatR is especially designed for experimentalists and non-expert users to allow the visual inspection of their tracking and imaging data. The package does not perform automatic image analysis or object tracking itself. It rather allows the combined visualization of raw imaging data with calculated summary statistics to explain specific characteristics and evaluate possible artifacts. Thereby, it supports imaging and tracking software, such as FiJi/TrackMate (Schindelin et al., *Nat. Meth.* 2012, Berg et al. *Nat. Meth.* 2019), and analysis tools, such as CelltrackR (Wortel et al., *ImmunoInf.* 2021), by allowing the combined visualization of their individual outputs within the raw image data. To this end, VisuStatR is able to select and zoom-in on specific objects and tracks using different display modes.
+
 ![Concepts of VisuStatR](man/figures/visumotr_concept.png)
+
+As input VisuStatR requires:
++ the original stacks of 2D/3D images analyzed (with VisuStatR supporting tiff, png,pdf, and jpeg) 
++ the obtained tracking data as csv-file, 
++ the summary statistics that are evaluated on the image data. 
 
 The package acts as a wrapper for annotating provided images with several, modifiable `ggplot2`-layers. With `visustat_frame()`, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. `visustat_summary()` allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with `visustat_all()` which allows to combine mapped frames and summary plots created by `visustat_frame()` and `visustat_summary()`. The output of all functions are `ggplot2`-objects which can further be manipulated in a common manner.
 
@@ -38,14 +45,13 @@ In addition to the functionality as an R-package, VisuStatR can be completely us
 ## Install VisuStatR
 
 VisuStatR was developed as an R-package under version 4.0.4 and requires the previous installation of R  (https://cran.r-project.org). It depends on the R packages *tidyverse, ggplot2, plotly, Rmisc, cowplot, doSNOW, facetscales, foreach, ggecho, grid, gridExtra, magick, parallel, shiny, shinydashboard* and *rlang*. 
-These packages can be installed into your R-environment from CRAN, as e.g. by typing the following command in your R-console.
+Some of the packages are not available on CRAN and need to be installed via *devtools* before the installation of VisuStatR. This includes *foreach* and *ggecho*. 
+
 
 ```{r}
-install.packages(“packagename”)
-```
-Alternatively, use respective installation functions within the integrative development environment RStudio (https://www.rstudio.com). Some of the packages are not available on CRAN and need to be installed via devtools. This includes *foreach* and *ggecho*.
+# If devtools is not already installed:
+install.packages(“devtools”)
 
-```{r}
 # install dependencies which are not found on CRAN
 devtools::install_github("zeehio/facetscales")
 remotes::install_github("coolbutuseless/ggecho")
@@ -57,3 +63,5 @@ VisuStatR is then installed directly from GitHub via the following command:
 # install VisuStatR from git repo
 devtools::install_git("https://github.com/grrchrr/VisuStatR")
 ```
+More information on the individual functions and the required inputs can be found within the documentation at XXX.
+
