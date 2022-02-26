@@ -58,10 +58,16 @@
 <!-- badges: start -->
 <p><img src="https://img.shields.io/badge/lifecycle-beta-orange.svg"><!-- badges: end --></p>
 <p>Live-cell microscopy has become an essential tool for analyzing dynamic processes in various biological applications. To critically assess the influence of individual cells on the calculated summary statistics, and to detect heterogeneous cell populations or possible confounding factors, such as misclassified or -tracked objects, a direct mapping of gained statistical information onto the actual image data is necessary. VisuStatR allows to visualize time-resolved motility parameters or any other summary statistic onto images in R. Originally, this package was intended to be used with live-cell microscopy images and cell-tracking data. But in general VisuStatR can be used with any kind of data supplying a dataframe with trackIds, time and spatial coordinates (2D/3D), as well as numeric or discrete mapping parameters and corresponding images.</p>
+<div class="section level3">
+<h3 id="intention-and-concept-of-the-software-tool">Intention and concept of the software tool<a class="anchor" aria-label="anchor" href="#intention-and-concept-of-the-software-tool"></a>
+</h3>
+<p>VisuStatR is especially designed for experimentalists and non-expert users to allow the visual inspection of their tracking and imaging data. The package does not perform automatic image analysis or object tracking itself. It rather allows the combined visualization of raw imaging data with calculated summary statistics to explain specific characteristics and evaluate possible artifacts. Thereby, it supports imaging and tracking software, such as FiJi/TrackMate (Schindelin et al., <em>Nat. Meth.</em> 2012, Berg et al. <em>Nat. Meth.</em> 2019), and analysis tools, such as CelltrackR (Wortel et al., <em>ImmunoInf.</em> 2021), by allowing the combined visualization of their individual outputs within the raw image data. To this end, VisuStatR is able to select and zoom-in on specific objects and tracks using different display modes.</p>
 <div class="figure">
-<img src="reference/figures/visumotr_concept.png" alt=""><p class="caption">Concepts of VisuStatR</p>
+<img src="reference/figures/visuStatR_concept.png" alt=""><p class="caption">Concepts of VisuStatR</p>
 </div>
+<p>As input VisuStatR requires: + the original stacks of 2D/3D images analyzed (with VisuStatR supporting tiff, png,pdf, and jpeg) + the obtained tracking data as csv-file, + the summary statistics that are evaluated on the image data.</p>
 <p>The package acts as a wrapper for annotating provided images with several, modifiable <code>ggplot2</code>-layers. With <code><a href="reference/visustat_frame.html">visustat_frame()</a></code>, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. <code><a href="reference/visustat_summary.html">visustat_summary()</a></code> allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with <code><a href="reference/visustat_all.html">visustat_all()</a></code> which allows to combine mapped frames and summary plots created by <code><a href="reference/visustat_frame.html">visustat_frame()</a></code> and <code><a href="reference/visustat_summary.html">visustat_summary()</a></code>. The output of all functions are <code>ggplot2</code>-objects which can further be manipulated in a common manner.</p>
+</div>
 <div class="section level2">
 <h2 id="display-modes">Display modes<a class="anchor" aria-label="anchor" href="#display-modes"></a>
 </h2>
@@ -106,15 +112,17 @@
 <div class="section level2">
 <h2 id="install-visustatr">Install VisuStatR<a class="anchor" aria-label="anchor" href="#install-visustatr"></a>
 </h2>
-<p>VisuStatR was developed as an R-package under version 4.0.4 and requires the previous installation of R (<a href="https://cran.r-project.org" class="external-link uri">https://cran.r-project.org</a>). It depends on the R packages <em>tidyverse, ggplot2, plotly, Rmisc, cowplot, doSNOW, facetscales, foreach, ggecho, grid, gridExtra, magick, parallel, shiny, shinydashboard</em> and <em>rlang</em>. These packages can be installed into your R-environment from CRAN, as e.g. by typing the following command in your R-console.</p>
-<pre class="{r}"><code>install.packages(“packagename”)</code></pre>
-<p>Alternatively, use respective installation functions within the integrative development environment RStudio (<a href="https://www.rstudio.com" class="external-link uri">https://www.rstudio.com</a>). Some of the packages are not available on CRAN and need to be installed via devtools. This includes <em>foreach</em> and <em>ggecho</em>.</p>
-<pre class="{r}"><code><span class="co"># install dependencies which are not found on CRAN</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"zeehio/facetscales"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"coolbutuseless/ggecho"</span><span class="op">)</span></code></pre>
+<p>VisuStatR was developed as an R-package under version 4.0.4 and requires the previous installation of R (<a href="https://cran.r-project.org" class="external-link uri">https://cran.r-project.org</a>). It depends on the R packages <em>tidyverse, ggplot2, plotly, Rmisc, cowplot, doSNOW, facetscales, foreach, ggecho, grid, gridExtra, magick, parallel, shiny, shinydashboard</em> and <em>rlang</em>. Some of the packages are not available on CRAN and need to be installed via <em>devtools</em> before the installation of VisuStatR. This includes <em>foreach</em> and <em>ggecho</em>.</p>
+<pre class="{r}"><code># If devtools is not already installed:
+install.packages(“devtools”)
+
+# install dependencies which are not found on CRAN
+devtools::install_github("zeehio/facetscales")
+remotes::install_github("coolbutuseless/ggecho")</code></pre>
 <p>VisuStatR is then installed directly from GitHub via the following command:</p>
 <pre class="{r}"><code><span class="co"># install VisuStatR from git repo</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_git</a></span><span class="op">(</span><span class="st">"https://github.com/grrchrr/VisuStatR"</span><span class="op">)</span></code></pre>
+<p>More information on the individual functions and the required inputs can be found within the documentation at XXX.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
