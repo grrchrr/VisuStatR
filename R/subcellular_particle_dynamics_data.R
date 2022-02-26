@@ -1,4 +1,4 @@
-#' CSubcellular particle dynamics data
+#' Subcellular particle dynamics data
 #'
 #' Description of dataset
 #' @name subcellular_particle_dynamics

@@ -63,7 +63,10 @@
 <div class="figure">
 <img src="reference/figures/visuStatR_concept.png" alt=""><p class="caption">Concepts of VisuStatR</p>
 </div>
-<p>As input VisuStatR requires: + the original stacks of 2D/3D images analyzed (with VisuStatR supporting <code>tiff</code>, <code>png</code>, and <code>jpeg</code> or any other image format supported by the <code>magick</code> library) + the obtained tracking data + the summary statistics that are evaluated on the image data + when using the Shiny app the tracking data and summary statistics need to be supplied as a <code>csv</code>-file</p>
+<p>As input VisuStatR requires: + the original stacks of 2D/3D images analyzed (with VisuStatR supporting <code>tiff</code>, <code>png</code>, and <code>jpeg</code> or any other image format supported by the <code>magick</code> library)<br>
++ the obtained tracking data<br>
++ the summary statistics that are evaluated on the image data<br>
++ when using the Shiny app the tracking data and summary statistics need to be supplied as a <code>csv</code>-file</p>
 <p>The package acts as a wrapper for annotating provided images with several, modifiable <code>ggplot2</code>-layers. With <code><a href="reference/visustat_frame.html">visustat_frame()</a></code>, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. <code><a href="reference/visustat_summary.html">visustat_summary()</a></code> allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with <code><a href="reference/visustat_all.html">visustat_all()</a></code> which allows to combine mapped frames and summary plots created by <code><a href="reference/visustat_frame.html">visustat_frame()</a></code> and <code><a href="reference/visustat_summary.html">visustat_summary()</a></code>. The output of all functions are <code>ggplot2</code>-objects which can further be manipulated in a common manner.</p>
 </div>
 <div class="section level2">

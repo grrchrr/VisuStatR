@@ -3,7 +3,7 @@
 \docType{data}
 \name{subcellular_particle_dynamics}
 \alias{subcellular_particle_dynamics}
-\title{CSubcellular particle dynamics data}
+\title{Subcellular particle dynamics data}
 \usage{
 data(subcellular_particle_dynamics)
 }
