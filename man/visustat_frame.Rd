@@ -98,7 +98,7 @@ returns a ggplot2 plot-object which can be further modified
 With \code{visustat_frame}, continuous and discrete parameters can be mapped individually on color, shape and size for one timepoint.
 }
 \examples{
-# import tracking data
+# import hiv motility tracking data
 data('hiv_motility')
 # get image files
 images <- hiv_motility_images()
@@ -117,4 +117,20 @@ visustat_frame(hiv_motility,
    points.size=2,
    image.normalize=1
  )
+# import clonogenic assay colony growth data
+data('clonogenic_assay')
+# get image files
+images <- clonogenic_assay_images()
+# run visustat_frame with default settings
+visustat_frame(clonogenic_assay, image=images[15], frame=15, tracks.length=0, axis.display=0)
+
+# import subcellular particle data
+data('subcellular_particle_dynamics')
+# get image files
+images <- subcellular_particle_dynamics_images()
+visustat_frame(subcellular_particle_dynamics,
+ image=images[2], frame=2,
+ tracks.length=0,
+ axis.display=0,
+ par.map='MEAN_INTENSITY') + scale_color_viridis_c(option='plasma')
 }

@@ -13,6 +13,12 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/clonogenic_assay.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clonogenic_assay_images.html</loc>
+  </url>
+  <url>
     <loc>/reference/hiv_motility.html</loc>
   </url>
   <url>
@@ -20,6 +26,12 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subcellular_particle_dynamics.html</loc>
+  </url>
+  <url>
+    <loc>/reference/subcellular_particle_dynamics_images.html</loc>
   </url>
   <url>
     <loc>/reference/visumot_package.html</loc>

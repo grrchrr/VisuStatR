@@ -4,7 +4,7 @@
 #' hiv_motility_images()
 #' @export
 hiv_motility_images <- function(){
-  files <- system.file("extdata", c('loose_000.tif',
+  files <- system.file("extdata/hiv_motility", c('loose_000.tif',
                                     'loose_001.tif',
                                     'loose_002.tif',
                                     'loose_003.tif',
