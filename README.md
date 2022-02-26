@@ -46,7 +46,7 @@ In addition to the functionality as an R-package, VisuStatR can be completely us
 ## Install VisuStatR
 
 VisuStatR was developed as an R-package under version 4.0.4 and requires the previous installation of R  (https://cran.r-project.org). It depends on the R packages *tidyverse, ggplot2, plotly, Rmisc, cowplot, doSNOW, facetscales, foreach, ggecho, grid, gridExtra, magick, parallel, shiny, shinydashboard* and *rlang*. 
-Some of the packages are not available on CRAN and need to be installed via *devtools* before the installation of VisuStatR. This includes *foreach* and *ggecho*. 
+Some of the packages are not available on CRAN and need to be installed via *devtools* before the installation of VisuStatR. This includes *focetscales* and *ggecho*. 
 
 
 ```{r}
@@ -64,5 +64,5 @@ VisuStatR is then installed directly from GitHub via the following command:
 # install VisuStatR from git repo
 devtools::install_git("https://github.com/grrchrr/VisuStatR")
 ```
-More information on the individual functions and the required inputs can be found within the documentation at XXX.
+More information on the individual functions and the required inputs can be found within the documentation at https://grrchrr.github.io/VisuStatR/reference/index.html.
 
