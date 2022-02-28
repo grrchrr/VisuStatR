@@ -3,12 +3,13 @@
 \docType{data}
 \name{subcellular_particle_dynamics}
 \alias{subcellular_particle_dynamics}
-\title{Subcellular particle dynamics data}
+\title{Subcellular particle dynamics data of labeled genomic loci in nuclei of genome engineered cell lines}
 \usage{
 data(subcellular_particle_dynamics)
 }
 \description{
-Description of dataset
+This dataframe contains tracking data based on the imaging data: \code{\link{subcellular_particle_dynamcis_images}}.
+Spots for the 15 first frames of the original dataset were identified and tracked with the FiJi plugin TrackMate.
 }
 \examples{
 data(subcellular_particle_dynamics)

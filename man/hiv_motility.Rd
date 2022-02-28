@@ -8,10 +8,14 @@
 data(hiv_motility)
 }
 \description{
-Description of dataset
+This dataframe contains tracking data based on the imaging data: \code{\link{hiv_motility_images}}. HIV-1 infected and uninfected human CD4+ T lymphocytes were labelled with PKH67 or PKH26 cell dyes, mixed at defined ratio and embedded in bovine collagen I. Migration of these cells in 3D cultures were then tracked by inverse light microscopy for a duration of up to 3 h, with images taken every 30 s to 1 min.
+Cells were tracked by ilastik. Time-resolved motility statistics of velocity, turning angle, arrest coefficient, root-mean-square deviation (RMSD) and straightness for the 15 first frames of the original data were calculated using the R-package MotilityLab.
 }
 \examples{
 data(hiv_motility)
 hiv_motility
+}
+\references{
+Imle A, Kumberger P, Schnellbächer ND, Fehr J, Carrillo-Bustamante P, Ales J, et al. Experimental and computational analyses reveal that environmental restrictions shape HIV-1 spread in 3D cultures. Nat Commun. 2019 05;10(1):2144.
 }
 \keyword{datasets}

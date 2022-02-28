@@ -2,13 +2,19 @@
 % Please edit documentation in R/clonogenic_assay_imaging_data.R
 \name{clonogenic_assay_images}
 \alias{clonogenic_assay_images}
-\title{clonogenic_assay_images}
+\title{Clonogenic assay colony growth imaging data}
 \usage{
 clonogenic_assay_images()
 }
 \description{
 Loads example images of colony growth in a clonogenic assay.
+ Images represent 15 frames of H3122 human non-small cell lung adenocarcinoma cells growing in a single well on a 96-well plate.
+  Data courtesy of Dr. Ivana Dokic. The images were registered and cells and colonies were segmented, tracked and quantified to extract colony growth data as described in Koch et al. (2021).
+  Corresponding data table can be found here: \code{\link{clonogenic_assay}}
 }
 \examples{
 clonogenic_assay_images()
+}
+\references{
+Koch RA, Harmel C, Alber M, Bahn E. A framework for automated time-resolved analysis of cell colony growth after irradiation. Phys Med Biol. 2021 Jan 29;66(3):035017. doi: 10.1088/1361-6560/abd00d. PMID: 33264763.
 }

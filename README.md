@@ -9,10 +9,11 @@ VisuStatR is especially designed for experimentalists and non-expert users to al
 ![Concepts of VisuStatR](man/figures/visuStatR_concept.png)
 
 As input VisuStatR requires:  
-+ the original stacks of 2D/3D images analyzed (with VisuStatR supporting `tiff`, `png`, and `jpeg` or any other image format supported by the `magick` library)  
-+ the obtained tracking data  
-+ the summary statistics that are evaluated on the image data  
-+ when using the Shiny app the tracking data and summary statistics need to be supplied as a `csv`-file  
+
+- the original stacks of 2D/3D images analyzed (with VisuStatR supporting `tiff`, `png`, and `jpeg` or any other image format supported by the `magick` library)  
+- the obtained tracking data  
+- the summary statistics that are evaluated on the image data  
+- when using the Shiny app the tracking data and summary statistics need to be supplied as a `csv`-file  
 
 The package acts as a wrapper for annotating provided images with several, modifiable `ggplot2`-layers. With `visustat_frame()`, continous and discrete parameters can be mapped individually on color, shape and size for one timepoint. `visustat_summary()` allows to create a corresponding plot of all given statistics for the whole range of the provided data. A time-resolved image-series can be created with `visustat_all()` which allows to combine mapped frames and summary plots created by `visustat_frame()` and `visustat_summary()`. The output of all functions are `ggplot2`-objects which can further be manipulated in a common manner.
 

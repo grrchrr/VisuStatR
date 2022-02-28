@@ -2,7 +2,7 @@
 % Please edit documentation in R/hiv_motility_imaging_data.R
 \name{hiv_motility_images}
 \alias{hiv_motility_images}
-\title{hiv_motility_images}
+\title{HIV Momages}
 \usage{
 hiv_motility_images()
 }

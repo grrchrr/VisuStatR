@@ -1,6 +1,8 @@
-#' Subcellular particle dynamics data
+#' Subcellular particle dynamics data of labeled genomic loci in nuclei of genome engineered cell lines
 #'
-#' Description of dataset
+#' @description This dataframe contains tracking data based on the imaging data: \code{\link{subcellular_particle_dynamcis_images}}.
+#' Spots for the 15 first frames of the original dataset were identified and tracked with the FiJi plugin TrackMate.
+#'
 #' @name subcellular_particle_dynamics
 #' @docType data
 #'

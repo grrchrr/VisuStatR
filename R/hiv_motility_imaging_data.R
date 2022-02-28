@@ -1,4 +1,4 @@
-#' @title hiv_motility_images
+#' @title HIV Momages
 #' @description Loads example images of CD4+ T cells in a complex collagen environment.
 #' @examples
 #' hiv_motility_images()
