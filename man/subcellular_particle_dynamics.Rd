@@ -8,8 +8,8 @@
 data(subcellular_particle_dynamics)
 }
 \description{
-This dataframe contains tracking data based on the imaging data: \code{\link{subcellular_particle_dynamcis_images}}.
-Spots for the 15 first frames of the original dataset were identified and tracked with the FiJi plugin TrackMate.
+This dataframe contains tracking data based on the imaging data: \code{\link{subcellular_particle_dynamics_images}}.
+Spots for the 15 first frames of the original dataset were identified and tracked with the Fiji plugin TrackMate.
 }
 \examples{
 data(subcellular_particle_dynamics)

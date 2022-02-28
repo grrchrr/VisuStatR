@@ -7,7 +7,7 @@
 subcellular_particle_dynamics_images()
 }
 \description{
-Loads example images of subcellular particle dynamics of labeled genomic loci in engineered cell line.
+Loads example images of subcellular particle dynamics of labeled genomic loci in engineered cell line. Correspoinding to tracking data: \code{\link{subcellular_particle_dynamics}}
 Images represent 15 frames of Feeder-independent Chic1 TetO/TetR-eGFP PGK12.1 mouse female embryonic stem cells which were acquired with
 35 ms exposure time and 100×/1.49 objective with 0.3 μm intervals for z-stacks and 30 s intervals between timepoints on a modified Eclipse
 Ti-E brightfield/fluorescence microscope (Nikon) for HILO microscopy. Provided images are maximum intensity projections.
