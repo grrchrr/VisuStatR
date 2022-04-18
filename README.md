@@ -6,7 +6,7 @@ Live-cell microscopy has become an essential tool for analyzing dynamic processe
 ### Intention and concept of the software tool
 VisuStatR is especially designed for experimentalists and non-expert users to allow the visual inspection of their tracking and imaging data. The package does not perform automatic image analysis or object tracking itself. It rather allows the combined visualization of raw imaging data with calculated summary statistics to explain specific characteristics and evaluate possible artifacts. Thereby, it supports imaging and tracking software, such as Fiji/TrackMate (Schindelin et al., *Nat. Meth.* 2012, Berg et al. *Nat. Meth.* 2019), and analysis tools, such as CelltrackR (Wortel et al., *ImmunoInf.* 2021), by allowing the combined visualization of their individual outputs within the raw image data. To this end, VisuStatR is able to select and zoom-in on specific objects and tracks using different display modes.
 
-![Concepts of VisuStatR](man/figures/visuStatR_concept.png)
+![Concepts of VisuStatR](man/figures/visuStatR_conceptR1.png)
 
 As input VisuStatR requires:  
 
